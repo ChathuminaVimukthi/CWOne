@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+<?php
+if (isset($this->session->userdata['logged_in'])) {
+    header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
+}
+?>
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
@@ -31,7 +36,8 @@
                         </div>
                     </div>
                     <div class="wrap-input form-group">
-                        <input type=password class="input form-control" name=CONFIRMPASSWORD placeholder="Confirm Password">
+                        <input type=password class="input form-control" name=CONFIRMPASSWORD
+                               placeholder="Confirm Password">
                         <div style="color: #990000">
                             <?php echo form_error('CONFIRMPASSWORD'); ?>
                         </div>
@@ -73,7 +79,8 @@
         </form>
         <hr/>
         <div class="container-navigate-btn">
-            <button class="navigate-btn" style="width: 50%" onclick="location.href='/CWOne/index.php/UserController/showLogin'">
+            <button class="navigate-btn" style="width: 50%"
+                    onclick="location.href='/CWOne/index.php/UserController/showLogin'">
                 Login
             </button>
         </div>

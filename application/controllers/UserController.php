@@ -53,7 +53,7 @@ class UserController extends CI_Controller{
         $this->form_validation->set_rules('USERNAME', 'Username', 'trim|required');
         $this->form_validation->set_rules('PASSWORD', 'Password', 'trim|required');
 
-        if ($this->form_validation->run() == FALSE) {
+        if ($this->form_validation->run() == false) {
             if(isset($this->session->userdata['logged_in'])){
                 $this->load->view('homePage');
             }else{
@@ -67,18 +67,18 @@ class UserController extends CI_Controller{
             $this->load->model('UserDetailsManager', 'obj');
             $result = $this->obj->login($data);
             if ($result == true) {
-//                $username = $this->input->post('USERNAME');
-//                $result = $this->obj->read_user_information($username);
-//                if ($result != false) {
-//                    $session_data = array(
-//                        'UserName' => $result[0]->user_name,
-//                        'Password' => $result[0]->password,
-//                    );
-//
-//                    $this->session->set_userdata('logged_in', $session_data);
-//                    $this->load->view('homePage');
-//                }
-                $this->load->view('movie');
+                $username = $this->input->post('USERNAME');
+                $result = $this->obj->read_user_information($username);
+                if ($result) {
+                    $session_data = array(
+                        'UserName' => $result[0]->UserName,
+                        'Password' => $result[0]->Password,
+                        'UserId' => $result[0]->UserId
+                    );
+
+                    $this->session->set_userdata('logged_in', $session_data);
+                    $this->load->view('homePage');
+                }
             } else {
                 $data = array(
                     'error_message' => 'Invalid Username or Password'
@@ -86,5 +86,14 @@ class UserController extends CI_Controller{
                 $this->load->view('musicsLogin', $data);
             }
         }
+    }
+
+    public function logoutUser(){
+        $sessionArray = array('UserName');
+        $this->session->unset_userdata('logged_in',$sessionArray);
+        $this->session->sess_destroy();
+//        $data['logout_message'] = 'Logged Out';
+//        $this->load->view('musicsLogin',$data);
+        $this->load->view('musicsLogin');
     }
 }

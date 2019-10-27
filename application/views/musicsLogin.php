@@ -2,7 +2,6 @@
 <html>
 <?php
 if (isset($this->session->userdata['logged_in'])) {
-
     header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
 }
 ?>
@@ -13,6 +12,13 @@ if (isset($this->session->userdata['logged_in'])) {
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/loginPage.css">
 </head>
 <body class="body-background">
+<!--<div>-->
+<!--    --><?php
+//    if(isset($logout_message)){
+//        echo "<script type='text/javascript'>alert('$logout_message');</script>";
+//    }
+//    ?>
+<!--</div>-->
 <div class="form-wrapper">
     <div class="headline-login">
         <h1>Welcome to Musics</h1>
@@ -47,7 +53,7 @@ if (isset($this->session->userdata['logged_in'])) {
         </form>
         <div>
             <?php
-            echo "<div class='error_msg'>";
+            echo "<div class='error_msg' style='color: #990000'>";
             if (isset($error_message)) {
                 echo $error_message;
             }

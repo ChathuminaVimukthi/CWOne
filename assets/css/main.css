@@ -1,0 +1,156 @@
+body {
+    background-color: #dfe3ee;
+}
+
+.second-body {
+    margin-top: 65px;
+}
+
+.navbar {
+    background-color: #3b5998;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.navbar-cover{
+    float: none;
+    vertical-align: top;
+    margin-top: 5px;
+    border: 1px solid #dadada;
+    border-radius: 30px;
+    background-color: #eee;
+}
+
+.profile-image {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#navBarSearchForm input[type=text] {
+    width: 430px !important;
+}
+
+.navbar-nav > li > a:hover {
+    background-color: #4374bc;
+    color: #fff;
+}
+
+.navbar-cover-nav > li > a:hover{
+    border-radius: 30px;
+    background-color: #fff;
+}
+
+.navbar-cover-nav > li > a:focus{
+    border-radius: 30px;
+    background-color: #fff;
+}
+
+.pointer-nav {
+    cursor: pointer;
+}
+
+.pointer-nav:hover {
+    margin: 2px 2px 2px 2px;
+    vertical-align: middle;
+    height: 45px;
+    border-radius: 50px;
+    background-color: #4374bc;
+    color: #ffffff;
+}
+
+.avatar {
+    color: #ffffff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.wrapper-post {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    height: 150px;
+}
+
+.header-post {
+    padding: 10px 0px 0px 10px;
+    height: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+.body-post {
+    height: 60px;
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-color: unset;
+
+}
+
+.form-control:focus {
+    border-color: unset;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+textarea {
+    border: none;
+    resize: none;
+}
+
+.footer-post {
+    height: 50px;
+    border-top: 1px solid #eee;
+}
+
+.submit-post {
+    margin: 4px 10px 2px 0px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3b5998;
+    color: #fff;
+}
+
+.posted-content {
+    width: 948px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #eee;
+}
+
+.cover-image {
+    background: url("../img/coverImage.jpg");
+    height: 200px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.profile-pic {
+    width: 130px;
+    margin-top: 15px;
+    height: 130px;
+    border: 5px solid #ffffff;
+    border-radius: 100%;
+}
+
+.username-style{
+    background: rgba(9, 9, 9, 0.6);
+    border-radius: 20px;
+    padding: 5px;
+    text-align: center;
+    color: #ffffff;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+input[type="text"] {
+    border: none
+}
+
+.timeline-body{
+    margin-top: -12px;
+}
