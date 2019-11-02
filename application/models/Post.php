@@ -3,16 +3,28 @@
 
 class Post{
     private $userId;
+    private $userAvatar;
     private $userName;
     private $date;
     private $content;
 
-    public function __construct($userId, $userName, $date, $content)
+    public function __construct($userId, $userAvatar, $userName, $date, $content)
     {
         $this->userId = $userId;
+        $this->userAvatar = $userAvatar;
         $this->userName = $userName;
         $this->date = $date;
         $this->content = $content;
+    }
+
+    public function getUserAvatar()
+    {
+        return $this->userAvatar;
+    }
+
+    public function setUserAvatar($userAvatar)
+    {
+        $this->userAvatar = $userAvatar;
     }
 
     public function getUserName()

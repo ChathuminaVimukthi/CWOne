@@ -3,19 +3,29 @@
 
 class User
 {
+    private $userId;
     private $userName;
-    private $password;
     private $firstName;
     private $lastName;
-    private $city;
+    private $userAvatar;
 
-    public function __construct($userName, $password, $firstName, $lastName, $city)
+    public function __construct($userId, $userName, $firstName, $lastName, $userAvatar)
     {
+        $this->userId = $userId;
         $this->userName = $userName;
-        $this->password = $password;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
-        $this->city = $city;
+        $this->userAvatar = $userAvatar;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
     public function getUserName()
@@ -26,16 +36,6 @@ class User
     public function setUserName($userName)
     {
         $this->userName = $userName;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    public function setPassword($password)
-    {
-        $this->password = $password;
     }
 
     public function getFirstName()
@@ -58,14 +58,16 @@ class User
         $this->lastName = $lastName;
     }
 
-    public function getCity()
+    public function getUserAvatar()
     {
-        return $this->city;
+        return $this->userAvatar;
     }
 
-    public function setCity($city)
+    public function setUserAvatar($userAvatar)
     {
-        $this->city = $city;
+        $this->userAvatar = $userAvatar;
     }
+
+
 
 }

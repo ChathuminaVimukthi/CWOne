@@ -36,7 +36,7 @@ if (isset($this->session->userdata['logged_in'])) {
         <ul class="nav navbar-nav col-md-2">
             <li class="active pointer-nav" style="color: #fff"
                 onclick="window.location='<?php echo base_url(); ?>index.php/PublicHomePageController/'">
-                <img src="<?php echo base_url(); ?>assets/img/man.png" class="avatar img-circle">
+                <img src="<?php echo $this->session->userdata['logged_in']['Avatar'] ?>" class="avatar img-circle">
                 <?php
                 echo $username
                 ?>
@@ -61,7 +61,10 @@ if (isset($this->session->userdata['logged_in'])) {
         <div class="header-cover">
             <div class="cover-image">
                 <div class="col-md-3">
-                    <img src="<?php echo base_url(); ?>assets/img/man.png" class="profile-pic">
+                    <?php
+                    $profilepic = $this->session->userdata['logged_in']['Avatar'] ;
+                    echo '<img src="'.$profilepic.'" class="profile-pic">'
+                    ?>
                     <h4 class="username-style">
                         <?php
                         echo $username;
@@ -86,7 +89,7 @@ if (isset($this->session->userdata['logged_in'])) {
             </div>
         </div>
 
-        <div class="timeline-body" id="timeLine" style="height: 300px">
+        <div class="timeline-body" id="timeLine">
             <?php
             if ($postsFound == 0) {
                 echo '<div class="wrapper-post" style="margin-top: 5px">';
@@ -113,7 +116,8 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '<div class="col-md-6">';
                         echo '<div class="row">';
                         echo '<div class="col-md-1">';
-                        echo '<img src="<?php ?>assets/img/man.png" style="height: 20px;width: 20px">';
+                        $profilepic = $this->session->userdata['logged_in']['Avatar'] ;
+                        echo '<img src="'.$profilepic.'" style="height: 30px;width: 30px;border-radius: 100%">';
                         echo '</div>';
                         echo '<div class="col-md-10" style="font-weight: bold;font-size: medium">';
                         echo $value->getUserName();
@@ -144,8 +148,10 @@ if (isset($this->session->userdata['logged_in'])) {
             ?>
         </div>
 
-        <div class="followers-body" id="followers" style="height: 300px;background: #990000; display: none">
+        <div class="followers-body" id="followers" style="display: none">
+            <div class="posted-content">
 
+            </div>
         </div>
 
         <div class="followers-body" id="following" style="height: 300px;background: #91991b; display: none">

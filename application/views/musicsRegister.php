@@ -24,9 +24,14 @@ if (isset($this->session->userdata['logged_in'])) {
                 <div class="col-md-6">
                     <div class="wrap-input form-group">
                         <input type=text class="input form-control" name=USERNAME placeholder="User Name"
-                               value="<?php echo set_value('FIRSTNAME'); ?>">
+                               value="<?php echo set_value('USERNAME'); ?>">
                         <div style="color: #990000">
-                            <?php echo form_error('USERNAME'); ?>
+                            <?php
+                            echo form_error('USERNAME');
+                            if (isset($error_message)) {
+                                echo $error_message;
+                            }
+                            ?>
                         </div>
                     </div>
                     <div class="wrap-input form-group">
@@ -40,6 +45,13 @@ if (isset($this->session->userdata['logged_in'])) {
                                placeholder="Confirm Password">
                         <div style="color: #990000">
                             <?php echo form_error('CONFIRMPASSWORD'); ?>
+                        </div>
+                    </div>
+                    <div class="wrap-input form-group">
+                        <input type=text class="input form-control" name=IMAGEURL
+                               placeholder="Profile Image URL"  value="<?php echo set_value('IMAGEURL'); ?>">
+                        <div style="color: #990000">
+                            <?php echo form_error('IMAGEURL'); ?>
                         </div>
                     </div>
                 </div>
@@ -60,8 +72,17 @@ if (isset($this->session->userdata['logged_in'])) {
                         </div>
                     </div>
                     <div class="wrap-input form-group">
-                        <input type=text class="input form-control" name=CITY placeholder="City"
-                               value="<?php echo set_value('CITY'); ?>">
+                        <label>Select your favorite music genre </label>
+                        <select id="company" class="form-control">
+                            <?php
+                            foreach ($musicGenre as $value){
+                                echo '<option value="'.$value->getId().'">';
+                                echo $value->getGenre();
+                                echo '</option>';
+                            }
+                            ?>
+
+                        </select>
                         <div style="color: #990000">
                             <?php echo form_error('CITY'); ?>
                         </div>

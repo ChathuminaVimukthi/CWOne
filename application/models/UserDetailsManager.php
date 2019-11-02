@@ -1,6 +1,7 @@
 <?php
 
 include_once('User.php');
+include_once('MusicGenre.php');
 class UserDetailsManager extends CI_Model{
     function register($user){
         $this->db->insert('Users', $user);
@@ -21,8 +22,7 @@ class UserDetailsManager extends CI_Model{
         }
     }
 
-// Read data from database to show data in admin page
-    public function read_user_information($username) {
+    public function getUserDetails($username) {
 
         $this->db->select('*');
         $this->db->from('Users');
@@ -32,6 +32,21 @@ class UserDetailsManager extends CI_Model{
 
         if ($query->num_rows() == 1) {
             return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function getMusicGenres(){
+        $this->db->select('*');
+        $this->db->from('MusicGenre');
+        $query = $this->db->get();
+        $data = array();
+        if ($query->num_rows() != 0) {
+            foreach ($query->result() as $row){
+                $data[] = new MusicGenre($row->Id, $row->Genre);
+            }
+            return $data;
         } else {
             return false;
         }

@@ -9,14 +9,11 @@ class HomePageController extends CI_Controller
         $this->load->library('session');
     }
 
-    public function Index()
-    {
+    public function Index(){
         $this->displayPosts();
-//        $this->load->view('homePage');
     }
 
-    public function addPost()
-    {
+    public function addPost(){
         $this->form_validation->set_rules('POSTCONTENT', 'A message', 'trim|required');
         if ($this->form_validation->run() == true) {
             if (isset($this->session->userdata['logged_in'])) {
@@ -32,10 +29,7 @@ class HomePageController extends CI_Controller
                 );
                 $this->load->model('PostsManager', 'obj');
                 $this->obj->addPost($postData);
-
-                $this->displayPosts();
-//                print_r($postData['UserId'],false);
-//                die();
+                redirect('HomePageController');
 
             } else {
                 $this->load->view('homePage');
@@ -59,12 +53,72 @@ class HomePageController extends CI_Controller
             );
             $this->load->view('homePage',$data);
         }
-//        print_r($result, false);
-//        die();
     }
 
     public function search()
     {
+    }
+
+    public function displayFollowers(){
+        $userid = $this->session->userdata['logged_in']['UserId'];
+        $this->load->model('NetworkManager', 'obj');
+        $followers = $this->obj->getFollowers($userid);
+
+        if($followers == 0){
+//            print_r('svghsdvhsdjvd ', false);
+//            die();
+            $data = array(
+                'followers' => 0
+            );
+            $this->load->view('network', $data);
+
+        }else{
+            $data = array(
+                'followers' => $followers
+            );
+            $this->load->view('network', $data);
+        }
+
+    }
+
+    public function displayFollowing(){
+        $userid = $this->session->userdata['logged_in']['UserId'];
+        $this->load->model('NetworkManager', 'obj');
+        $followers = $this->obj->getFollowing($userid);
+
+        if($followers == 0){
+//            print_r('svghsdvhsdjvd ', false);
+//            die();
+            $data = array(
+                'followers' => 0
+            );
+            $this->load->view('network', $data);
+
+        }else{
+            $data = array(
+                'followers' => $followers
+            );
+            $this->load->view('network', $data);
+        }
+
+    }
+
+    public function loadUserPage(){
+        $userid = $this->input->post('USERID');
+        $username = $this->input->post('USERNAME');
+        $this->load->model('UserDetailsManager', 'obj');
+        $this->load->model('PostsManager', 'postObj');
+        $userDetails = $this->obj->getUserDetails($username);
+        $postData = $this->postObj->getPostData($userid);
+
+
+        foreach ($userDetails as $row){
+            $data = array(
+                'userData' => new User($row->UserId,$row->UserName,$row->FirstName,$row->LastName,$row->Avatar),
+                'postData' => $postData
+            );
+            $this->load->view('userProfile',$data);
+        }
     }
 
 }

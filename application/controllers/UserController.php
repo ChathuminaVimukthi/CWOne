@@ -12,7 +12,7 @@ class UserController extends CI_Controller{
     }
 
     public function showRegistration(){
-        $this->load->view('musicsRegister');
+        $this->displayGenre();
     }
 
     public function showLogin(){
@@ -25,24 +25,35 @@ class UserController extends CI_Controller{
         $this->form_validation->set_rules('CONFIRMPASSWORD', 'Confirm password', 'trim|required|min_length[5]');
         $this->form_validation->set_rules('FIRSTNAME', 'First Name', 'trim|required');
         $this->form_validation->set_rules('LASTNAME', 'Last Name', 'trim|required');
-        $this->form_validation->set_rules('CITY', 'City', 'trim|required');
+        $this->form_validation->set_rules('IMAGEURL', 'Profile Image URL', 'trim|required');
 
         if ($this->form_validation->run() == true) {
-            $user = array(
-                'UserName' => $this->input->post('USERNAME'),
-                'LastName' => $this->input->post('LASTNAME'),
-                'FirstName' => $this->input->post('FIRSTNAME'),
-                'Password' => md5($this->input->post('PASSWORD')),
-                'City' => $this->input->post('CITY')
-            );
-
             $this->load->model('UserDetailsManager', 'obj');
-            $this->obj->register($user);
+            $result = $this->obj->getUserDetails($this->input->post('USERNAME'));
+            if ($result) {
+                $data = array(
+                    'error_message' => 'Username already in use!'
+                );
+                $this->load->view('musicsRegister', $data);
+            }else{
+                $user = array(
+                    'UserName' => $this->input->post('USERNAME'),
+                    'LastName' => $this->input->post('LASTNAME'),
+                    'FirstName' => $this->input->post('FIRSTNAME'),
+                    'Password' => md5($this->input->post('PASSWORD')),
+                    'Avatar' => $this->input->post('IMAGEURL')
+                );
 
-            $this->load->view('musicsLogin');
-        }
-        else {
-            $this->load->view('musicsRegister');
+                $this->obj->register($user);
+
+                $this->load->view('musicsLogin');
+            }
+        } else {
+            if(isset($this->session->userdata['logged_in'])){
+                redirect(base_url() . "index.php/HomePageController");
+            }else{
+                $this->load->view('musicsRegister');
+            }
         }
 
 
@@ -55,7 +66,7 @@ class UserController extends CI_Controller{
 
         if ($this->form_validation->run() == false) {
             if(isset($this->session->userdata['logged_in'])){
-                $this->load->view('homePage');
+                redirect(base_url() . "index.php/HomePageController");
             }else{
                 $this->load->view('musicsLogin');
             }
@@ -68,16 +79,18 @@ class UserController extends CI_Controller{
             $result = $this->obj->login($data);
             if ($result == true) {
                 $username = $this->input->post('USERNAME');
-                $result = $this->obj->read_user_information($username);
+                $result = $this->obj->getUserDetails($username);
                 if ($result) {
                     $session_data = array(
                         'UserName' => $result[0]->UserName,
-                        'Password' => $result[0]->Password,
-                        'UserId' => $result[0]->UserId
+                        'UserId' => $result[0]->UserId,
+                        'Avatar' => $result[0]->Avatar,
+                        'FirstName' => $result[0]->FirstName,
+                        'LastName' => $result[0]->LastName
                     );
 
                     $this->session->set_userdata('logged_in', $session_data);
-                    $this->load->view('homePage');
+                    redirect(base_url() . "index.php/HomePageController");
                 }
             } else {
                 $data = array(
@@ -88,9 +101,19 @@ class UserController extends CI_Controller{
         }
     }
 
+    public function displayGenre(){
+        $this->load->model('UserDetailsManager', 'obj');
+        $result = $this->obj->getMusicGenres();
+
+        $data = array(
+            'musicGenre' => $result
+        );
+
+        $this->load->view('musicsRegister', $data);
+    }
+
     public function logoutUser(){
-        $sessionArray = array('UserName');
-        $this->session->unset_userdata('logged_in',$sessionArray);
+        $this->session->unset_userdata('logged_in');
         $this->session->sess_destroy();
 //        $data['logout_message'] = 'Logged Out';
 //        $this->load->view('musicsLogin',$data);

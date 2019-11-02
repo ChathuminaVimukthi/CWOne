@@ -38,7 +38,10 @@ if (isset($this->session->userdata['logged_in'])) {
         <ul class="nav navbar-nav col-md-2">
             <li class="active pointer-nav" style="color: #fff"
                 onclick="window.location='<?php echo base_url(); ?>index.php/PublicHomePageController/'">
-                <img src="<?php echo base_url(); ?>assets/img/man.png" class="avatar img-circle">
+                <?php
+                $profilepic = $this->session->userdata['logged_in']['Avatar'] ;
+                echo '<img src="'.$profilepic.'" class="avatar img-circle">'
+                ?>
                 <?php
                 echo $username
                 ?>
@@ -59,7 +62,7 @@ if (isset($this->session->userdata['logged_in'])) {
 <div class="row second-body">
     <div class="col-md-2" style="background: #98bcce;"></div>
 
-    <div class="col-md-8" style="overflow-y: scroll">
+    <div class="col-md-8">
         <div class="wrapper-post">
             <form action="/CWOne/index.php/HomePageController/addPost" method=POST>
                 <?php echo form_open(); ?>
@@ -79,7 +82,7 @@ if (isset($this->session->userdata['logged_in'])) {
         </div>
 
         <?php
-        if ($postsFound != 0) {
+        if (isset($postsFound)) {
             if (count($postsFound) > 0) {
                 foreach ($postsFound as $value) {
                     echo '<div class="posted-content">';
@@ -88,7 +91,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     echo '<div class="col-md-6">';
                     echo '<div class="row">';
                     echo '<div class="col-md-1">';
-                    echo '<img src="<?php ?>assets/img/man.png" style="height: 20px;width: 20px">';
+                    echo '<img src="'.$value->getUserAvatar().'" style="height: 30px;width: 30px;border-radius: 100%">';
                     echo '</div>';
                     echo '<div class="col-md-10" style="font-weight: bold;font-size: medium">';
                     echo $value->getUserName();
@@ -118,7 +121,32 @@ if (isset($this->session->userdata['logged_in'])) {
         ?>
     </div>
 
-    <div class="col-md-2" style="background: #98bcce;"></div>
+    <div class="col-md-2">
+        <div class="side-skirt affix">
+            <div class="followers-btn" style="">
+                <p style="text-align: center;padding-top: 5px;">Manage your network</p>
+                <hr style="margin-top: 0px"/>
+                <div class="col-md-12">
+                    <form action="/CWOne/index.php/HomePageController/displayFollowers">
+                        <button id="followersBtnHp" class="network-buttons" type="submit">Followers</button>
+                    </form>
+                    <div style="text-align: center">
+                        1250
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <hr/>
+                    <form action="/CWOne/index.php/HomePageController/displayFollowing">
+                        <button class="network-buttons" type="submit">Following</button>
+                    </form>
+                    <div style="text-align: center">
+                        1250
+                    </div>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
