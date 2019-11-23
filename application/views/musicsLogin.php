@@ -2,7 +2,7 @@
 <html>
 <?php
 if (isset($this->session->userdata['logged_in'])) {
-    header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
+    redirect("UserController/login");
 }
 ?>
 <head>

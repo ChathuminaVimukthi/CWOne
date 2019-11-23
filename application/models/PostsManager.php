@@ -15,14 +15,14 @@ class PostsManager extends CI_Model{
         $this->db->order_by("Date", "DESC");
         $query = $this->db->get();
 
+        $postDataFound = array();
         if ($query->num_rows() != 0) {
-            $postDataFound = array();
             foreach ($query->result() as $row){
                 $postDataFound[] = new Post($row->UserId,$row->Avatar,$row->UserName,$row->Date,$row->Content);
             }
             return $postDataFound;
         } else {
-            return 0;
+            return $postDataFound;
         }
     }
 
@@ -61,7 +61,7 @@ class PostsManager extends CI_Model{
         if(count($postDataFound) >0){
             return $postDataFound;
         }else{
-            return 0;
+            return $postDataFound;
         }
     }
 

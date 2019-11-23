@@ -3,7 +3,7 @@
 if (isset($this->session->userdata['logged_in'])) {
     $username = ($this->session->userdata['logged_in']['UserName']);
 } else {
-    header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
+    redirect("UserController/login");
 }
 ?>
 <head>
@@ -14,45 +14,7 @@ if (isset($this->session->userdata['logged_in'])) {
 </head>
 <body>
 
-<nav class="navbar navbar-light navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header col-md-1">
-            <a class="navbar-brand" style="color: #ffffff"
-               href="<?php echo base_url(); ?>index.php/HomePageController/">MUSICS</a>
-        </div>
-        <form class="navbar-form navbar-left" id="navBarSearchForm" action="/CWOne/index.php/HomePageController/search"
-              method=POST>
-            <?php echo form_open(); ?>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" name=SEARCHTXT>
-                <div class="input-group-btn form-group">
-                    <button class="btn btn-default" style="height: 100%;padding: 9px" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <?php echo form_close(); ?>
-        </form>
-        <ul class="nav navbar-nav col-md-2">
-            <li class="active pointer-nav" style="color: #fff"
-                onclick="window.location='<?php echo base_url(); ?>index.php/PublicHomePageController/'">
-                <img src="<?php echo $this->session->userdata['logged_in']['Avatar'] ?>" class="avatar img-circle">
-                <?php
-                echo $username
-                ?>
-            </li>
-        </ul>
-        <!--        <ul class="nav navbar-nav">-->
-        <!--            <li class="active"><a href="#" style="color: #ffffff">Home</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 1</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 2</a></li>-->
-        <!--        </ul>-->
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a style="color: #ffffff"
-                                  href="<?php echo base_url(); ?>index.php/UserController/logoutUser">Logout</a></li>
-        </ul>
-    </div>
-</nav>
+<?php include('util/header.php'); ?>
 
 <div class="row second-body">
     <div class="col-md-2" style="background: #98bcce;"></div>
@@ -142,7 +104,21 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                     }
                 } else {
-                    echo 'No posts available';
+                    echo '<div class="wrapper-post" style="margin-top: 5px">';
+                    echo '<form action="/CWOne/index.php/HomePageController/addPost" method=POST>';
+                    echo '<?php echo form_open(); ?>';
+                    echo '<div class="header-post">Create Post</div>';
+                    echo '<div class="body-post form-group">';
+                    echo '<textarea type=text class="input form-control" style="border: none" name=POSTCONTENT 
+                    placeholder="You have not posted anything :| ...Post something...">';
+                    echo '</textarea>';
+                    echo '</div>';
+                    echo '<div class="footer-post form-group">';
+                    echo '<button class="submit-post pull-right" type="submit">Post</button>';
+                    echo '</div>';
+                    echo '<?php echo form_close(); ?>';
+                    echo '</form>';
+                    echo '</div>';
                 }
             }
             ?>

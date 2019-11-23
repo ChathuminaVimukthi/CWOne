@@ -3,7 +3,7 @@
 if (isset($this->session->userdata['logged_in'])) {
     $username = ($this->session->userdata['logged_in']['UserName']);
 } else {
-    header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
+    redirect("UserController/login");
 }
 ?>
 <head>
@@ -16,66 +16,54 @@ if (isset($this->session->userdata['logged_in'])) {
 </head>
 <body>
 
-<nav class="navbar navbar-light navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header col-md-1">
-            <a class="navbar-brand" style="color: #ffffff"
-               href="<?php echo base_url(); ?>index.php/HomePageController/">MUSICS</a>
-        </div>
-        <form class="navbar-form navbar-left" id="navBarSearchForm" action="/CWOne/index.php/HomePageController/search"
-              method=POST>
-            <?php echo form_open(); ?>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" name=SEARCHTXT>
-                <div class="input-group-btn form-group">
-                    <button class="btn btn-default" style="height: 100%;padding: 9px" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <?php echo form_close(); ?>
-        </form>
-        <ul class="nav navbar-nav col-md-2">
-            <li class="active pointer-nav" style="color: #fff"
-                onclick="window.location='<?php echo base_url(); ?>index.php/PublicHomePageController/'">
-                <?php
-                $profilepic = $this->session->userdata['logged_in']['Avatar'] ;
-                echo '<img src="'.$profilepic.'" class="avatar img-circle">'
-                ?>
-                <?php
-                echo $username
-                ?>
-            </li>
-        </ul>
-        <!--        <ul class="nav navbar-nav">-->
-        <!--            <li class="active"><a href="#" style="color: #ffffff">Home</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 1</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 2</a></li>-->
-        <!--        </ul>-->
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a style="color: #ffffff"
-                                  href="<?php echo base_url(); ?>index.php/UserController/logoutUser">Logout</a></li>
-        </ul>
-    </div>
-</nav>
+<?php include('util/header.php'); ?>
 
 <div class="row second-body">
-    <div class="col-md-2" style="background: #98bcce;"></div>
+    <div class="col-md-2">
+        <div class="side-skirt" style="margin-left: 15px">
+            <?php
+            $profilepic = $this->session->userdata['logged_in']['Avatar'];
+            echo '<div class="col-md-12" style="text-align: center;padding: 5px;">';
+            echo '<img src="' . $profilepic . '" style="height: 150px;width: 150px;border-radius: 100%">';
+            echo '</div>';
+            $userName = $this->session->userdata['logged_in']['UserName'];
+            echo '<hr style="margin-top: 5px !important; margin-bottom: 5px !important;"/>';
+            echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;text-align: center;padding: 5px;">';
+            echo $userName;
+            echo '</div>';
+            echo '<hr style="margin-top: 5px !important; margin-bottom: 5px !important;"/>';
+            echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;text-align: center;padding: 5px;">';
+            echo 'Favorites';
+            echo '</div>';
+            echo '<div class="col-md-12" style="font-size: medium;text-align: center;padding: 5px;">';
+            $musicsTypes = $this->session->userdata['logged_in']['MusicsTypes'];
+            foreach ($musicsTypes as $genre){
+                echo $genre;
+                echo '<br/>';
+            }
+            echo '</div>';
+            ?>
+        </div>
+        <br>
+        <div class="side-skirt" style="height: 100px;margin-left: 15px">
+
+        </div>
+    </div>
 
     <div class="col-md-8">
-        <div class="wrapper-post">
+        <div class="wrapper-post" style="margin-left: 5px">
             <form action="/CWOne/index.php/HomePageController/addPost" method=POST>
                 <?php echo form_open(); ?>
                 <div class="header-post">Create Post</div>
                 <div class="body-post form-group">
-                    <textarea type=text class="input form-control" style="border: none" name=POSTCONTENT
+                    <textarea type=text class="input form-control" id="postContent" style="border: none" name=POSTCONTENT
                               placeholder="What's on your mind, <?php echo $username ?>?"></textarea>
                     <div style="color: #990000">
                         <?php echo form_error('POSTCONTENT'); ?>
                     </div>
                 </div>
                 <div class="footer-post form-group">
-                    <button class="submit-post pull-right" type="submit">Post</button>
+                    <button disabled class="submit-post pull-right" id="postMe" type="submit">Post</button>
                 </div>
                 <?php echo form_close(); ?>
             </form>
@@ -85,16 +73,18 @@ if (isset($this->session->userdata['logged_in'])) {
         if (isset($postsFound)) {
             if (count($postsFound) > 0) {
                 foreach ($postsFound as $value) {
-                    echo '<div class="posted-content">';
+                    echo '<div class="posted-content" style="margin-left: 5px">';
                     echo '<div style="padding:10px 25px 10px 25px">';
                     echo '<div class="row">';
                     echo '<div class="col-md-6">';
                     echo '<div class="row">';
                     echo '<div class="col-md-1">';
-                    echo '<img src="'.$value->getUserAvatar().'" style="height: 30px;width: 30px;border-radius: 100%">';
+                    echo '<img src="' . $value->getUserAvatar() . '" style="height: 30px;width: 30px;border-radius: 100%">';
                     echo '</div>';
                     echo '<div class="col-md-10" style="font-weight: bold;font-size: medium">';
+                    echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/HomePageController/loadUserPage?USERID='.$value->getUserId().'&USERNAME='.$value->getUserName().'\'">';
                     echo $value->getUserName();
+                    echo '</div>';
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
@@ -107,7 +97,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     $postedContent = $value->getContent();
                     $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
                     if (preg_match($filterUrl, $postedContent, $url)) {
-                        echo preg_replace($filterUrl, "<a href='{$url[0]}'>{$url[0]}</a> ", $postedContent);
+                        echo preg_replace($filterUrl, "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ", $postedContent);
                     } else {
                         echo $postedContent;
                     }
@@ -122,7 +112,7 @@ if (isset($this->session->userdata['logged_in'])) {
     </div>
 
     <div class="col-md-2">
-        <div class="side-skirt affix">
+        <div class="side-skirt">
             <div class="followers-btn" style="">
                 <p style="text-align: center;padding-top: 5px;">Manage your network</p>
                 <hr style="margin-top: 0px"/>
@@ -142,11 +132,25 @@ if (isset($this->session->userdata['logged_in'])) {
                     <div style="text-align: center">
                         1250
                     </div>
-                    <hr/>
+                    <br>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    document.getElementById("postContent").addEventListener("keyup", function() {
+        var nameInput = document.getElementById('postContent').value;
+        if (nameInput != "") {
+            document.getElementById('postMe').removeAttribute("disabled");
+            document.getElementById('postMe').style.backgroundColor = "#3b5998";
+
+        } else {
+            document.getElementById('postMe').setAttribute("disabled", null);
+            document.getElementById('postMe').style.backgroundColor = "#525252";
+
+        }
+    });
+</script>
 </body>
 </html>

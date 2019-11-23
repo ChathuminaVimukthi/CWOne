@@ -81,12 +81,14 @@ class UserController extends CI_Controller{
                 $username = $this->input->post('USERNAME');
                 $result = $this->obj->getUserDetails($username);
                 if ($result) {
+                    $resultTwo = $this->obj->getUserFavoriteMusic($result->getUserId());
                     $session_data = array(
-                        'UserName' => $result[0]->UserName,
-                        'UserId' => $result[0]->UserId,
-                        'Avatar' => $result[0]->Avatar,
-                        'FirstName' => $result[0]->FirstName,
-                        'LastName' => $result[0]->LastName
+                        'UserName' => $result->getUserName(),
+                        'UserId' => $result->getUserId(),
+                        'Avatar' => $result->getUserAvatar(),
+                        'FirstName' => $result->getFirstName(),
+                        'LastName' => $result->getLastName(),
+                        'MusicsTypes' => $resultTwo
                     );
 
                     $this->session->set_userdata('logged_in', $session_data);

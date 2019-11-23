@@ -3,7 +3,7 @@
 if (isset($this->session->userdata['logged_in'])) {
     $username = ($this->session->userdata['logged_in']['UserName']);
 } else {
-    header("location: http://192.168.64.2/CWOne/index.php/UserController/login");
+    redirect("UserController/login");
 }
 ?>
 <head>
@@ -14,45 +14,7 @@ if (isset($this->session->userdata['logged_in'])) {
 </head>
 <body>
 
-<nav class="navbar navbar-light navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header col-md-1">
-            <a class="navbar-brand" style="color: #ffffff"
-               href="<?php echo base_url(); ?>index.php/HomePageController/">MUSICS</a>
-        </div>
-        <form class="navbar-form navbar-left" id="navBarSearchForm" action="/CWOne/index.php/HomePageController/search"
-              method=POST>
-            <?php echo form_open(); ?>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" name=SEARCHTXT>
-                <div class="input-group-btn form-group">
-                    <button class="btn btn-default" style="height: 100%;padding: 9px" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <?php echo form_close(); ?>
-        </form>
-        <ul class="nav navbar-nav col-md-2">
-            <li class="active pointer-nav" style="color: #fff"
-                onclick="window.location='<?php echo base_url(); ?>index.php/PublicHomePageController/'">
-                <img src="<?php echo $this->session->userdata['logged_in']['Avatar'] ?>" class="avatar img-circle">
-                <?php
-                echo $username
-                ?>
-            </li>
-        </ul>
-        <!--        <ul class="nav navbar-nav">-->
-        <!--            <li class="active"><a href="#" style="color: #ffffff">Home</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 1</a></li>-->
-        <!--            <li><a href="#" style="color: #ffffff">Page 2</a></li>-->
-        <!--        </ul>-->
-        <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a style="color: #ffffff"
-                                  href="<?php echo base_url(); ?>index.php/UserController/logoutUser">Logout</a></li>
-        </ul>
-    </div>
-</nav>
+<?php include('util/header.php'); ?>
 
 <div class="row second-body">
     <div class="col-md-2" style="background: #98bcce;"></div>
@@ -75,40 +37,62 @@ if (isset($this->session->userdata['logged_in'])) {
                     User Infor
                 </div>
             </div>
+            <div class="navbar navbar-light navbar-cover">
+                <ul class="nav navbar-nav navbar-cover-nav">
+                    <li class="active" id="timeLineBtn">
+                        <a href="<?php echo base_url(); ?>index.php/PublicHomePageController/displayPosts"
+                           style="color: #959595">
+                            Timeline
+                        </a>
+                    </li>
+                    <li class="active" id="followingBtn"><a href="#" style="color: #959595">Following</a></li>
+                    <li class="active" id="followersBtn"><a href="#" style="color: #959595">Followers</a></li>
+                </ul>
+            </div>
         </div>
 
         <div class="timeline-body" id="timeLine">
             <?php
             if (isset($postData)) {
-                foreach ($postData as $value) {
+                if(count($postData) > 0){
+                    foreach ($postData as $value) {
+                        echo '<div class="posted-content">';
+                        echo '<div style="padding:10px 25px 10px 25px">';
+                        echo '<div class="row">';
+                        echo '<div class="col-md-6">';
+                        echo '<div class="row">';
+                        echo '<div class="col-md-1">';
+                        $profilepic = $userData->getUserAvatar();
+                        echo '<img src="' . $profilepic . '" style="height: 30px;width: 30px;border-radius: 100%">';
+                        echo '</div>';
+                        echo '<div class="col-md-10" style="font-weight: bold;font-size: medium">';
+                        echo $value->getUserName();
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<div class="col-md-6 pull-right" style="font-size: small">';
+                        echo 'Posted on : ';
+                        echo $value->getDate();
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<hr/>';
+                        $postedContent = $value->getContent();
+                        $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+                        if (preg_match($filterUrl, $postedContent, $url)) {
+                            echo preg_replace($filterUrl, "<a href='{$url[0]}'>{$url[0]}</a> ", $postedContent);
+                        } else {
+                            echo $postedContent;
+                        }
+                        echo '<hr/>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                }else{
                     echo '<div class="posted-content">';
                     echo '<div style="padding:10px 25px 10px 25px">';
-                    echo '<div class="row">';
-                    echo '<div class="col-md-6">';
-                    echo '<div class="row">';
-                    echo '<div class="col-md-1">';
-                    $profilepic = $userData->getUserAvatar();
-                    echo '<img src="' . $profilepic . '" style="height: 30px;width: 30px;border-radius: 100%">';
-                    echo '</div>';
-                    echo '<div class="col-md-10" style="font-weight: bold;font-size: medium">';
-                    echo $value->getUserName();
-                    echo '</div>';
-                    echo '</div>';
-                    echo '</div>';
-                    echo '<div class="col-md-6 pull-right" style="font-size: small">';
-                    echo 'Posted on : ';
-                    echo $value->getDate();
-                    echo '</div>';
-                    echo '</div>';
-                    echo '<hr/>';
-                    $postedContent = $value->getContent();
-                    $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-                    if (preg_match($filterUrl, $postedContent, $url)) {
-                        echo preg_replace($filterUrl, "<a href='{$url[0]}'>{$url[0]}</a> ", $postedContent);
-                    } else {
-                        echo $postedContent;
-                    }
-                    echo '<hr/>';
+                    echo '<textarea type=text style="border: none" 
+                    placeholder="User has not posted anything !">';
+                    echo '</textarea>';
                     echo '</div>';
                     echo '</div>';
                 }
