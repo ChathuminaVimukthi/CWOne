@@ -18,7 +18,7 @@ class PostsManager extends CI_Model{
         $postDataFound = array();
         if ($query->num_rows() != 0) {
             foreach ($query->result() as $row){
-                $postDataFound[] = new Post($row->UserId,$row->Avatar,$row->UserName,$row->Date,$row->Content);
+                $postDataFound[] = new Post($row->Id,$row->UserId,$row->Avatar,$row->UserName,$row->Date,$row->Content);
             }
             return $postDataFound;
         } else {
@@ -50,7 +50,7 @@ class PostsManager extends CI_Model{
 
             if ($query->num_rows() != 0) {
                 foreach ($query->result() as $row){
-                    $postDataFound[] = new Post($row->UserId,$row->Avatar,$row->UserName,$row->Date,$row->Content);
+                    $postDataFound[] = new Post($row->Id,$row->UserId,$row->Avatar,$row->UserName,$row->Date,$row->Content);
                 }
             }
         }
@@ -63,6 +63,11 @@ class PostsManager extends CI_Model{
         }else{
             return $postDataFound;
         }
+    }
+
+    function deletePost($postId){
+        $this->db->where('Id',$postId);
+        $this->db->delete('Posts');
     }
 
 }

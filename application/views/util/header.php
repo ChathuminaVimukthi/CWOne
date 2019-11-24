@@ -19,7 +19,7 @@
         </form>
         <ul class="nav navbar-nav col-md-2">
             <li class="active pointer-nav" style="color: #fff"
-                onclick="window.location='<?php echo base_url(); ?>index.php/HomePageController/loadUserPage?USERID=<?php echo $this->session->userdata['logged_in']['UserId'] ?>&USERNAME=<?php echo $this->session->userdata['logged_in']['UserName'] ?>'">
+                onclick="window.location='<?php echo base_url(); ?>index.php/ProfileController/loadUserPage?USERID=<?php echo $this->session->userdata['logged_in']['UserId'] ?>&USERNAME=<?php echo $this->session->userdata['logged_in']['UserName'] ?>'">
                 <?php
                 $profilepic = $this->session->userdata['logged_in']['Avatar'] ;
                 echo '<img src="'.$profilepic.'" class="avatar img-circle">'

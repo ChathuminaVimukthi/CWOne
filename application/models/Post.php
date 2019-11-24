@@ -2,19 +2,29 @@
 
 
 class Post{
+    private $postId;
     private $userId;
     private $userAvatar;
     private $userName;
     private $date;
     private $content;
 
-    public function __construct($userId, $userAvatar, $userName, $date, $content)
+    public function __construct($postId,$userId, $userAvatar, $userName, $date, $content)
     {
+        $this->postId = $postId;
         $this->userId = $userId;
         $this->userAvatar = $userAvatar;
         $this->userName = $userName;
         $this->date = $date;
         $this->content = $content;
+    }
+
+    public function getPostId(){
+        return $this->postId;
+    }
+
+    public function setPostId($postId){
+        $this->postId = $postId;
     }
 
     public function getUserAvatar()

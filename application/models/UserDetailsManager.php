@@ -4,8 +4,15 @@ include_once('User.php');
 include_once('MusicGenre.php');
 class UserDetailsManager extends CI_Model{
 
-    function register($user){
+    function register($user,$genre){
         $this->db->insert('Users', $user);
+        $userId = $this->getUserId($user['UserName']);
+        if ($userId){
+            foreach ($genre as $genreId){
+                $data = array('Genre_Id'=>$genreId, 'User_Id'=>$userId);
+                $this->db->insert('MusicSelections', $data);
+            }
+        }
     }
 
     public function login($data) {
@@ -18,6 +25,22 @@ class UserDetailsManager extends CI_Model{
         $query = $this->db->get();
         if ($query->num_rows() == 1) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getUserId($username){
+        $this->db->select('Users.UserId');
+        $this->db->from('Users');
+        $this->db->where('UserName', $username);
+        $this->db->limit(1);
+        $query = $this->db->get();
+
+        if ($query->num_rows() == 1) {
+            foreach ($query->result() as $row){
+                return $row->UserId;
+            }
         } else {
             return false;
         }

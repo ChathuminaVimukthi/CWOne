@@ -12,7 +12,7 @@ class UserController extends CI_Controller{
     }
 
     public function showRegistration(){
-        $this->displayGenre();
+        $this->displayGenre("");
     }
 
     public function showLogin(){
@@ -31,10 +31,7 @@ class UserController extends CI_Controller{
             $this->load->model('UserDetailsManager', 'obj');
             $result = $this->obj->getUserDetails($this->input->post('USERNAME'));
             if ($result) {
-                $data = array(
-                    'error_message' => 'Username already in use!'
-                );
-                $this->load->view('musicsRegister', $data);
+                $this->displayGenre('Username already in use!');
             }else{
                 $user = array(
                     'UserName' => $this->input->post('USERNAME'),
@@ -44,7 +41,9 @@ class UserController extends CI_Controller{
                     'Avatar' => $this->input->post('IMAGEURL')
                 );
 
-                $this->obj->register($user);
+                $genre = $this->input->post('genre');
+
+                $this->obj->register($user,$genre);
 
                 $this->load->view('musicsLogin');
             }
@@ -52,7 +51,7 @@ class UserController extends CI_Controller{
             if(isset($this->session->userdata['logged_in'])){
                 redirect(base_url() . "index.php/HomePageController");
             }else{
-                $this->load->view('musicsRegister');
+                $this->displayGenre("");
             }
         }
 
@@ -103,11 +102,12 @@ class UserController extends CI_Controller{
         }
     }
 
-    public function displayGenre(){
+    public function displayGenre($error){
         $this->load->model('UserDetailsManager', 'obj');
         $result = $this->obj->getMusicGenres();
 
         $data = array(
+            'error_message' => $error,
             'musicGenre' => $result
         );
 

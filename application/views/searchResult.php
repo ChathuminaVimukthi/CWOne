@@ -22,40 +22,20 @@ if (isset($this->session->userdata['logged_in'])) {
 <?php include('util/header.php'); ?>
 
 <div class="row second-body">
-    <div class="col-md-2">
-        <div class="side-skirt affix">
-            <div class="followers-btn" style="">
-                <p style="text-align: center;padding-top: 5px;">Manage your network</p>
-                <hr style="margin-top: 0px"/>
-                <div class="col-md-12">
-                    <form action="/CWOne/index.php/HomePageController/displayFollowers">
-                        <button id="followersBtnHp" class="network-buttons" type="submit">Followers</button>
-                    </form>
-                    <div style="text-align: center">
-                        1250
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <hr/>
-                    <form action="/CWOne/index.php/HomePageController/displayFollowing">
-                        <button class="network-buttons" type="submit">Following</button>
-                    </form>
-                    <div style="text-align: center">
-                        1250
-                    </div>
-                    <hr/>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-2" style="position: fixed; width: 16%">
+        <?php include('util/profileCard.php'); ?>
     </div>
 
-    <div class="col-md-8">
-        <div style="margin-top: -15px; ">
+    <div class="col-md-8" style="margin-left: 16%">
+        <div style="background: #fff; border-radius: 5px;height: 90%">
             <?php
             if (isset($others) && isset($followers)) {
                 if(count($followers) == 0 && count($others) == 0){
-                    echo "gsdjhgsjkdv";
+                    echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;text-align: center">';
+                    echo "No users found !";
+                    echo "</p>";
                 }else{
+                    echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Following</p>';
                     foreach ($followers as $follower) {
                         echo '<div class="col-md-6" style="padding-top: 15px">';
                         echo '<div class="col-md-12 profile-container" style="padding: 15px">';
@@ -64,7 +44,7 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                         echo '<div class="col-md-9">';
                         echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
-                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/HomePageController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
+                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
                         echo $follower->getUserName();
                         echo '</div>';
                         echo '</div>';
@@ -75,7 +55,8 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                         echo '</div>';
                     }
-
+                    echo '<hr style="background: #fff"/>';
+                    echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Others</p>';
                     foreach ($others as $follower) {
                         echo '<div class="col-md-6" style="padding-top: 15px;">';
                         echo '<div class="col-md-12 profile-container" style="padding: 15px">';
@@ -84,7 +65,7 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                         echo '<div class="col-md-9">';
                         echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
-                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/HomePageController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
+                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
                         echo $follower->getUserName();
                         echo '</div>';
                         echo '</div>';
@@ -101,36 +82,17 @@ if (isset($this->session->userdata['logged_in'])) {
                     }
                 }
 
+            }else{
+                echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;text-align: center">';
+                echo "No users found !";
+                echo "</p>";
             }
             ?>
         </div>
     </div>
 
-    <div class="col-md-2">
-        <div class="side-skirt affix">
-            <div class="followers-btn" style="">
-                <p style="text-align: center;padding-top: 5px;">Manage your network</p>
-                <hr style="margin-top: 0px"/>
-                <div class="col-md-12">
-                    <form action="/CWOne/index.php/HomePageController/displayFollowers">
-                        <button id="followersBtnHp" class="network-buttons" type="submit">Followers</button>
-                    </form>
-                    <div style="text-align: center">
-                        1250
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <hr/>
-                    <form action="/CWOne/index.php/HomePageController/displayFollowing">
-                        <button class="network-buttons" type="submit">Following</button>
-                    </form>
-                    <div style="text-align: center">
-                        1250
-                    </div>
-                    <hr/>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-2" style="position: fixed;margin-left: 84%">
+        <?php include('util/networkManagerCard.php'); ?>
     </div>
 </div>
 </body>

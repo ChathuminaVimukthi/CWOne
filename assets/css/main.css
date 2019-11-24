@@ -14,7 +14,7 @@ body {
     border-radius: 0;
 }
 
-.navbar-cover{
+.navbar-cover {
     float: none;
     vertical-align: top;
     margin-top: 5px;
@@ -37,12 +37,12 @@ body {
     color: #fff;
 }
 
-.navbar-cover-nav > li > a:hover{
+.navbar-cover-nav > li > a:hover {
     border-radius: 30px;
     background-color: #fff;
 }
 
-.navbar-cover-nav > li > a:focus{
+.navbar-cover-nav > li > a:focus {
     border-radius: 30px;
     background-color: #fff;
 }
@@ -145,7 +145,38 @@ textarea {
     border-radius: 100%;
 }
 
-.username-style{
+.friend-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 100px;
+    padding: 2px;
+    background: #3c983b;
+    border: 5px solid #ffffff;
+    margin-left: 90px;
+    margin-top: 15px;
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    z-index:2;
+    position: relative;
+}
+
+.unfollow-circle {
+    height: 40px;
+    border-radius: 100px;
+    padding: 5px;
+    background: #3b5998;
+    border: 5px solid #ffffff;
+    margin-left: 90px;
+    margin-top: 105px;
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+    z-index:2;
+    position: relative;
+}
+
+.username-style {
     background: rgba(9, 9, 9, 0.6);
     border-radius: 20px;
     padding: 5px;
@@ -158,11 +189,11 @@ input[type="text"] {
     border: none
 }
 
-.timeline-body{
+.timeline-body {
     margin-top: -12px;
 }
 
-.side-skirt{
+.side-skirt {
     min-height: 100px;
     overflow: hidden;
     background-color: #fff;
@@ -170,7 +201,8 @@ input[type="text"] {
     margin-top: 0px;
 }
 
-.network-buttons{
+.network-buttons {
+    background: #fff;
     width: 100%;
     border-radius: 30px;
     border: none;
@@ -179,10 +211,10 @@ input[type="text"] {
 
 hr {
     border: 0;
-    clear:both;
-    display:block;
+    clear: both;
+    display: block;
     width: 100%;
-    background-color:#eee;
+    background-color: #eee;
     height: 1px;
 }
 
