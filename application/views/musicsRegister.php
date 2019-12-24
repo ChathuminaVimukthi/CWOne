@@ -76,7 +76,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     </div>
                     <div class="wrap-input form-group">
                         <label>Select your favorite music genre </label>
-                        <select required style="border-radius: 10px" name="genre[]" id="musicGenre" multiple >
+                        <select style="border-radius: 10px" name="genre[]" id="musicGenre" multiple >
                             <?php
                             foreach ($musicGenre as $value){
                                 echo '<option value="'.$value->getId().'">';

@@ -17,14 +17,17 @@ class UserDetailsManager extends CI_Model{
 
     public function login($data) {
 
-        $this->db->select('*');
+        $this->db->select('Users.Password');
         $this->db->from('Users');
         $this->db->where('UserName',$data['UserName']);
-        $this->db->where('Password',$data['Password']);
         $this->db->limit(1);
         $query = $this->db->get();
         if ($query->num_rows() == 1) {
-            return true;
+            $userdata = array();
+            foreach ($query->result() as $row) {
+                $userdata[] = $row->Password;
+            }
+            return $userdata;
         } else {
             return false;
         }

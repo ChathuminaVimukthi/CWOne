@@ -7,7 +7,7 @@ if (isset($this->session->userdata['logged_in'])) {
 }
 ?>
 <head>
-    <title>Admin Page</title>
+    <title>Home Page</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -98,6 +98,21 @@ if (isset($this->session->userdata['logged_in'])) {
 
     <div class="col-md-2" style="position: fixed;margin-left: 84%">
         <?php include('util/networkManagerCard.php'); ?>
+        <br>
+        <div class="side-skirt" style="display: block;margin: auto;">
+            <div style="background-image: url('https://specials-images.forbesimg.com/imageserve/5d72899544f2b2000803dadc/960x0.jpg'); height: 500px">
+                <div class="col-md-12" style="font-weight: bold;background: rgba(58,58,58,0.6);color: #fff;height: 500px">
+                    <div style="">
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px">Summer Party</div>
+                        <div style="text-align: left;font-size: 15px;padding: 10px">Dec 17' Sat</div>
+                        <div style="text-align: left;font-size: 15px;padding: 10px">Mt.Lavinia</div>
+                        <div style="text-align: center;font-size: 15px;padding: 10px">with</div>
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px">Best DJs</div>
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px;margin-top: 99%">077123456</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script type="text/javascript">

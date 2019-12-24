@@ -37,7 +37,7 @@ class UserController extends CI_Controller{
                     'UserName' => $this->input->post('USERNAME'),
                     'LastName' => $this->input->post('LASTNAME'),
                     'FirstName' => $this->input->post('FIRSTNAME'),
-                    'Password' => md5($this->input->post('PASSWORD')),
+                    'Password' => password_hash($this->input->post('PASSWORD'), PASSWORD_DEFAULT),
                     'Avatar' => $this->input->post('IMAGEURL')
                 );
 
@@ -71,27 +71,33 @@ class UserController extends CI_Controller{
             }
         } else {
             $data = array(
-                'UserName' => $this->input->post('USERNAME'),
-                'Password' => md5($this->input->post('PASSWORD'))
+                'UserName' => $this->input->post('USERNAME')
             );
             $this->load->model('UserDetailsManager', 'obj');
             $result = $this->obj->login($data);
-            if ($result == true) {
-                $username = $this->input->post('USERNAME');
-                $result = $this->obj->getUserDetails($username);
-                if ($result) {
-                    $resultTwo = $this->obj->getUserFavoriteMusic($result->getUserId());
-                    $session_data = array(
-                        'UserName' => $result->getUserName(),
-                        'UserId' => $result->getUserId(),
-                        'Avatar' => $result->getUserAvatar(),
-                        'FirstName' => $result->getFirstName(),
-                        'LastName' => $result->getLastName(),
-                        'MusicsTypes' => $resultTwo
-                    );
+            if ($result) {
+                if(password_verify($this->input->post('PASSWORD'),$result[0])){
+                    $username = $this->input->post('USERNAME');
+                    $result = $this->obj->getUserDetails($username);
+                    if ($result) {
+                        $resultTwo = $this->obj->getUserFavoriteMusic($result->getUserId());
+                        $session_data = array(
+                            'UserName' => $result->getUserName(),
+                            'UserId' => $result->getUserId(),
+                            'Avatar' => $result->getUserAvatar(),
+                            'FirstName' => $result->getFirstName(),
+                            'LastName' => $result->getLastName(),
+                            'MusicsTypes' => $resultTwo
+                        );
 
-                    $this->session->set_userdata('logged_in', $session_data);
-                    redirect(base_url() . "index.php/HomePageController");
+                        $this->session->set_userdata('logged_in', $session_data);
+                        redirect(base_url() . "index.php/HomePageController");
+                    }
+                }else {
+                    $data = array(
+                        'error_message' => 'Invalid Username or Password'
+                    );
+                    $this->load->view('musicsLogin', $data);
                 }
             } else {
                 $data = array(
