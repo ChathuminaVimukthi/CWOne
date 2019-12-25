@@ -33,7 +33,7 @@ body {
 }
 
 .navbar-nav > li > a:hover {
-    background-color: #4374bc;
+    background-color: rgba(67, 116, 188, 0);
     color: #fff;
 }
 
@@ -222,4 +222,23 @@ hr {
     border-radius: 5px;
     background-color: #fff;
     border: 1px solid #eee;
+}
+
+.contacts-background {
+    background-color: #fff;
+    border-radius: 5px;
+    height: 99%;
+}
+
+.contacts-header{
+    /*background-color: #8B9DC3;*/
+    margin-top: 5px;
+    color: #1f1d1d;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#contactsSearchForm input[type=text] {
+    border: 1px solid #000;
+    width: 330px !important;
 }
