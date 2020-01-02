@@ -17,7 +17,7 @@
             </div>
             <?php echo form_close(); ?>
         </form>
-        <ul class="nav navbar-nav col-md-2">
+        <ul class="nav navbar-nav col-md-1">
             <li class="active pointer-nav" style="color: #fff"
                 onclick="window.location='<?php echo base_url(); ?>index.php/ProfileController/loadUserPage?USERID=<?php echo $this->session->userdata['logged_in']['UserId'] ?>&USERNAME=<?php echo $this->session->userdata['logged_in']['UserName'] ?>'">
                 <?php
@@ -28,6 +28,10 @@
                 echo $username
                 ?>
             </li>
+        </ul>
+        <ul class="nav navbar-nav">
+            <li class="active"><a style="color: #ffffff"
+                                  href="<?php echo base_url(); ?>index.php/ContactsController">Contact List</a></li>
         </ul>
         <!--        <ul class="nav navbar-nav">-->
         <!--            <li class="active"><a href="#" style="color: #ffffff">Home</a></li>-->

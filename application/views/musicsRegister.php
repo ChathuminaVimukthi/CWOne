@@ -17,7 +17,7 @@ if (isset($this->session->userdata['logged_in'])) {
 <body class="body-background">
 <div class="form-wrapper">
     <div class="headline-login">
-        <h1>Welcome to Musics</h1>
+        <h1>Welcome to Bebop</h1>
         <h3>Registration</h3>
     </div>
     <div class="col-md-12">

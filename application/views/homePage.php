@@ -102,9 +102,14 @@ if (isset($this->session->userdata['logged_in'])) {
         <div class="side-skirt" style="display: block;margin: auto;">
             <div style="background-image: url('https://specials-images.forbesimg.com/imageserve/5d72899544f2b2000803dadc/960x0.jpg'); height: 500px">
                 <div class="col-md-12" style="font-weight: bold;background: rgba(58,58,58,0.6);color: #fff;height: 500px">
-                    <button onclick="window.location='<?php echo base_url(); ?>index.php/ContactsController'">
-                        Contacts
-                    </button>
+                    <div style="">
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px">Summer Party</div>
+                        <div style="text-align: left;font-size: 15px;padding: 10px">Dec 17' Sat</div>
+                        <div style="text-align: left;font-size: 15px;padding: 10px">Mt.Lavinia</div>
+                        <div style="text-align: center;font-size: 15px;padding: 10px">with</div>
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px">Best DJs</div>
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px;margin-top: 99%">077123456</div>
+                    </div>
                 </div>
             </div>
         </div>

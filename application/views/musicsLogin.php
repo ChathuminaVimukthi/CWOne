@@ -21,11 +21,13 @@ if (isset($this->session->userdata['logged_in'])) {
 <!--</div>-->
 <div class="form-wrapper">
     <div class="headline-login">
-        <h1>Welcome to Musics</h1>
+        <h1>Welcome to Bebop</h1>
         <h3>Login</h3>
 
     </div>
-    <div class="col-md-6"></div>
+    <div class="col-md-6">
+        <img style="height: 250px;display: block;margin: auto" src="<?php echo base_url(); ?>assets/img/logo.png">
+    </div>
     <div class="col-md-6">
         <form action="/CWOne/index.php/UserController/login" method=POST>
             <?php echo form_open(); ?>
