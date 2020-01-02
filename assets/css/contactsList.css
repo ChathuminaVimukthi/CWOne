@@ -223,3 +223,32 @@
     clip: rect(1px 1px 1px 1px);
     clip: rect(1px, 1px, 1px, 1px);
 }
+
+.contactAvatar{
+    color: #fff;
+    height: 40px;
+    width: 40px;
+    border-radius: 30px;
+    text-align: center;
+    padding: 5px;
+    font-size: 20px;
+}
+
+.contactManageBtn{
+    float: right;
+    font-size: 20px;
+    background: #fff;
+    border: none;
+    text-align: end;
+    outline: none;
+}
+
+.contactName{
+    font-size: 18px;
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+.textClass{
+    padding-top:10px
+}
