@@ -153,14 +153,14 @@ if (isset($this->session->userdata['logged_in'])) {
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" style="background: #57b846 !important;" class="btn btn-primary" data-dismiss="modal" id="saveEditedData">Save changes</button>
+                        <button type="button" style="background: #57b846 !important;" class="btn btn-primary" id="saveEditedData">Save changes</button>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <div class="displayContacts" id="displayContacts" style="padding: 10px">
+        <div class="displayContacts" id="displayContacts" style="padding: 10px;background: #fff">
 
         </div>
     </div>
@@ -246,7 +246,6 @@ if (isset($this->session->userdata['logged_in'])) {
             let lastNameValid = true;
             let emailValid = true;
             let mobileNumberValid = true;
-            console.log('sdvsdv');
 
             $(".error").remove();
 
@@ -282,11 +281,12 @@ if (isset($this->session->userdata['logged_in'])) {
 
     $('#closeAlert').click(function () {
         document.getElementById("showAlert").style.display="none";
-    })
-
+    });
     //    --------------------------------------------------------------Backbone Part------------------------------------------------------------------
 
     //Main Model
+    let searchResponse = "";
+
     let Contacts = Backbone.Model.extend({
         url: function () {
             return "<?php echo base_url() ?>index.php/ContactsController/contact";
@@ -301,7 +301,10 @@ if (isset($this->session->userdata['logged_in'])) {
             let self = this;
             contactCollection.fetch({
                 async:false,
-                data: $.param({caseId: this.get('caseId'),lastName: this.get('lastName')})
+                data: $.param({caseId: this.get('caseId'),lastName: this.get('lastName')}),
+                success: function (contacts,response) {
+                    searchResponse = response;
+                }
             })
         },
         deleteById:function () {
@@ -318,24 +321,7 @@ if (isset($this->session->userdata['logged_in'])) {
         model:Contacts,
         url: function () {
             return "<?php echo base_url() ?>index.php/ContactsController/contact";
-        },
-        comparator: function (item1, item2) {
-            let val1 = item1.get(this.sort_key);
-            let val2 = item2.get(this.sort_key);
-            if (typeof (val1) === "string") {
-                val1 = val1.toLowerCase();
-                val2 = val2.toString().toLowerCase();
-            }
-
-            let sortValue = val1 > val2 ? 1 : -1;
-            return sortValue * this.sort_order;
-        },
-        sortByField: function (fieldName, orderType) {
-            this.sort_key = fieldName;
-            this.sort_order = orderType == "desc" ? -1 : 1;
-            console.log(this.sort_order);
-            this.sort();
-        },
+        }
     });
 
     let contactCollection = new ContactCollection();
@@ -343,14 +329,22 @@ if (isset($this->session->userdata['logged_in'])) {
     let contactsByName = new Contacts({caseId:3,lastName:"hey"});
     contactsByName.fetchByName();
 
+    contactCollection.comparator = function (model) {
+        return model.get("firstName");
+    };
+
     //List view
     let ContactView = Backbone.View.extend({
         el:"#displayContacts",
         model:contactCollection,
         initialize: function () {
             contactCollection.fetch({async:false});
+            this.byNameAscd();
             this.render();
-            this.listenTo(contactCollection, 'add remove', this.render);
+            this.listenTo(contactCollection, 'add remove change sort', this.render);
+        },
+        byNameAscd: function () {
+            contactCollection.sort();
         },
         events:{
             "click #deleteContactBtn": "deleteContact",
@@ -358,7 +352,6 @@ if (isset($this->session->userdata['logged_in'])) {
         },
         deleteContact: function (e){
             let contactId =  $(e.currentTarget).attr('value');
-            let deleteContact =  new Contacts(contactId);
             let deleteSvrContact =  new Contacts({id:contactId});
             contactCollection.remove(deleteSvrContact);
             deleteSvrContact.deleteById();
@@ -390,23 +383,24 @@ if (isset($this->session->userdata['logged_in'])) {
             contactCollection.each(function (c) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
-                let contact =" <div class='col-md-12' style='margin-bottom: 5px'>" +
-                    "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
-                    "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
-                    "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
-                    "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
-                    "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
-                    "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fa fa-pencil-square-o' aria-hidden='true'></i></button>"+
-                    "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
-                    "</div>"+
-                    "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
+                if(name != null){
+                    let contact =" <div class='col-md-12' style='margin-bottom: 5px'>" +
+                        "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
+                        "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
+                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fa fa-pencil-square-o' aria-hidden='true'></i></button>"+
+                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
+                        "</div>"+
+                        "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
 
-                ;
-                self.$el.append(contact);
+                    ;
+                    self.$el.append(contact);
 
-                let tNames = c.get('tagNames');
-                if(tNames.includes('Favorite')){
-                    let favoriteContacts =
+                    let tNames = c.get('tagNames');
+                    if(tNames.includes('Favorite')){
+                        let favoriteContacts =
                             "<hr style='margin-top: 3px;margin-bottom: 3px'/>"+
                             "<div style='padding: 5px'>"+
                             "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
@@ -415,8 +409,9 @@ if (isset($this->session->userdata['logged_in'])) {
                             "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
                             "</div>"+
                             "</div>";
-                    let div = document.getElementById("favoriteContacts");
-                    div.innerHTML += favoriteContacts;
+                        let div = document.getElementById("favoriteContacts");
+                        div.innerHTML += favoriteContacts;
+                    }
                 }
             });
 
@@ -424,6 +419,10 @@ if (isset($this->session->userdata['logged_in'])) {
     });
 
     let contactView = new ContactView();
+
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    };
 
     //Add contact View
     let AddContactBtn = Backbone.View.extend({
@@ -443,14 +442,14 @@ if (isset($this->session->userdata['logged_in'])) {
             let email = $('#email').val();
             let mobileNumber = $('#mobileNumber').val();
             let tags = $('#contactTags').val();
-            let tagNames = $('#contactTags').text();
+            let tagName = $('#contactTags option:selected').toArray().map(item => item.text).join();
             let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
 
             console.log(checkValidity);
             if (checkValidity) {
                 let contact = new Contacts({
-                    firstName: firstName,
-                    lastName: lastName,
+                    firstName: firstName.capitalize(),
+                    lastName: lastName.capitalize(),
                     email: email,
                     mobileNumber: mobileNumber,
                     tags: tags,
@@ -465,16 +464,24 @@ if (isset($this->session->userdata['logged_in'])) {
                 });
                 let contacts = new Contacts({
                     id:contactId,
-                    firstName: firstName,
-                    lastName: lastName,
+                    firstName: firstName.capitalize(),
+                    lastName: lastName.capitalize(),
                     email: email,
-                    mobileNumber: mobileNumber,
-                    tags: tags,
+                    mobileNumber: parseInt(mobileNumber),
+                    tagIds: tags,
+                    tagNames: tagName,
                     color: randomColor
                 });
                 $('#displayContacts').empty();
-                contactCollection.add(contacts,{reset: true});
-                contactCollection.sortByField('firstName','asc');
+                contactCollection.add(contacts);
+
+                $('#saveContactBtn').click(function (e) {
+                    e.preventDefault();
+                    $('#firstName').val('');
+                    $('#lastName').val('');
+                    $('#email').val('');
+                    $('#mobileNumber').val('');
+                });
             }
         }
     });
@@ -500,21 +507,28 @@ if (isset($this->session->userdata['logged_in'])) {
             let email = $('#editEmail').val();
             let mobileNumber = $('#editMobileNumber').val();
             let tags = $('#editContactTags').val();
+            let tagName = $('#editContactTags option:selected').toArray().map(item => item.text).join();
 
             if(checkValidityOfEditedData){
                 let contact = new Contacts({
                     id: contactId,
-                    firstName: firstName,
-                    lastName: lastName,
+                    firstName: firstName.capitalize(),
+                    lastName: lastName.capitalize(),
                     email: email,
                     mobileNumber: mobileNumber,
                     tags: tags
                 });
                 contact.save();
-
-                setTimeout(function(){
-                    window.location.reload(1);
-                }, 1000);
+                let cont = contactCollection.get(contactId);
+                cont.set({
+                    id: contactId,
+                    firstName: firstName.capitalize(),
+                    lastName: lastName.capitalize(),
+                    email: email,
+                    mobileNumber: mobileNumber,
+                    tagIds: tags,
+                    tagNames: tagName
+                })
             }
         }
     });
@@ -538,15 +552,16 @@ if (isset($this->session->userdata['logged_in'])) {
             let searchString = $('#searchContacts').val();
             $("#searchResults").html("");
             let contactsByName = new Contacts({caseId:1,lastName:searchString});
-
-            contactsByName.fetchByName(
-                contactsByName,{
-                    async:false,
-                    success: function (contacts, response) {
-                        console.log('nscshvhdhjs');
-                    }
-                }
-            );
+            contactsByName.fetchByName();
+            let validity = searchResponse['emptyMsg'];
+            if(validity === "false"){
+                document.getElementById("showAlert").style.display="block";
+                let alert = "<div style='margin: 10px' class='alert alert-danger alert-dismissible' role='alert'>" +
+                    "<button type='button' id='closeAlert' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+                    "<strong>No search results found!</strong></div>";
+                let div = document.getElementById("showAlert");
+                div.innerHTML += alert;
+            }
         }
     });
 
