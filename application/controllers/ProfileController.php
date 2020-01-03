@@ -52,7 +52,7 @@ class ProfileController extends CI_Controller
                 'Followed_Id' => $followedId
             );
             $this->obj->followUser($data);
-            redirect('/HomePageController/loadUserPage?USERID=' . $followedId . '&USERNAME=' . $userName);
+            redirect('/ProfileController/loadUserPage?USERID=' . $followedId . '&USERNAME=' . $userName);
         }else{
             redirect('/UserController/logoutUser');
         }
@@ -69,7 +69,7 @@ class ProfileController extends CI_Controller
                 'Followed_Id' => $followedId
             );
             $this->obj->unfollowUser($followerId, $followedId);
-            redirect('/HomePageController/loadUserPage?USERID=' . $followedId . '&USERNAME=' . $userName);
+            redirect('/ProfileController/loadUserPage?USERID=' . $followedId . '&USERNAME=' . $userName);
         }else{
             redirect('/UserController/logoutUser');
         }

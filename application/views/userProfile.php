@@ -108,13 +108,14 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                         echo '<hr/>';
                         $postedContent = $value->getContent();
-                        $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-                        if (preg_match($filterUrl, $postedContent, $url)) {
-                            if (preg_match("#\.(jpg|jpeg|gif|png)$# i", $url[0])) {
-                                echo preg_replace($filterUrl, "", $postedContent);
+                        $filterUrl = "~https?://(?![^\" ]*(?:jpg|png|gif))[^\" ]+~";
+                        $filterAll = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+                        $imageUrlFilter = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+(\/\S*)?\.(?:jpg|jpeg|gif|png|JPG|JPEG|PNG|GIF)/";
+                        if (preg_match($filterUrl, $value->getContent(), $url)) {
+                            echo preg_replace($filterAll, "", $postedContent);
+                            echo "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ";
+                            if (preg_match($imageUrlFilter,$value->getContent(), $url)) {
                                 echo  "<img style='height: 300px;margin-left: auto;margin-right: auto;display: block' src='{$url[0]}'/>";
-                            } else {
-                                echo preg_replace($filterUrl, "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ", $postedContent);
                             }
                         } else {
                             echo $postedContent;

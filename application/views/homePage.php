@@ -75,13 +75,14 @@ if (isset($this->session->userdata['logged_in'])) {
                     echo '</div>';
                     echo '<hr/>';
                     $postedContent = $value->getContent();
-                    $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-                    if (preg_match($filterUrl, $postedContent, $url)) {
-                        if (preg_match("#\.(jpg|jpeg|gif|png)$# i", $url[0])) {
-                            echo preg_replace($filterUrl, "", $postedContent);
+                    $filterUrl = "~https?://(?![^\" ]*(?:jpg|png|gif))[^\" ]+~";
+                    $filterAll = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+                    $imageUrlFilter = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+(\/\S*)?\.(?:jpg|jpeg|gif|png|JPG|JPEG|PNG|GIF)/";
+                    if (preg_match($filterUrl, $value->getContent(), $url)) {
+                        echo preg_replace($filterAll, "", $postedContent);
+                        echo "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ";
+                        if (preg_match($imageUrlFilter,$value->getContent(), $url)) {
                             echo  "<img style='height: 300px;margin-left: auto;margin-right: auto;display: block' src='{$url[0]}'/>";
-                        } else {
-                            echo preg_replace($filterUrl, "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ", $postedContent);
                         }
                     } else {
                         echo $postedContent;
@@ -100,15 +101,15 @@ if (isset($this->session->userdata['logged_in'])) {
         <?php include('util/networkManagerCard.php'); ?>
         <br>
         <div class="side-skirt" style="display: block;margin: auto;">
-            <div style="background-image: url('https://specials-images.forbesimg.com/imageserve/5d72899544f2b2000803dadc/960x0.jpg'); height: 500px">
-                <div class="col-md-12" style="font-weight: bold;background: rgba(58,58,58,0.6);color: #fff;height: 500px">
+            <div style="background-image: url('https://specials-images.forbesimg.com/imageserve/5d72899544f2b2000803dadc/960x0.jpg'); height: 400px">
+                <div class="col-md-12" style="font-weight: bold;background: rgba(58,58,58,0.6);color: #fff;height: 400px">
                     <div style="">
                         <div style="text-align: center;font-size: 25px;padding-top: 10px">Summer Party</div>
                         <div style="text-align: left;font-size: 15px;padding: 10px">Dec 17' Sat</div>
                         <div style="text-align: left;font-size: 15px;padding: 10px">Mt.Lavinia</div>
                         <div style="text-align: center;font-size: 15px;padding: 10px">with</div>
                         <div style="text-align: center;font-size: 25px;padding-top: 10px">Best DJs</div>
-                        <div style="text-align: center;font-size: 25px;padding-top: 10px;margin-top: 99%">077123456</div>
+                        <div style="text-align: center;font-size: 25px;padding-top: 10px;margin-top: 79%">077123456</div>
                     </div>
                 </div>
             </div>

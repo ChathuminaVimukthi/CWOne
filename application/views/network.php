@@ -2,6 +2,7 @@
 <?php
 if (isset($this->session->userdata['logged_in'])) {
     $username = ($this->session->userdata['logged_in']['UserName']);
+    $userId = ($this->session->userdata['logged_in']['UserId']);
 } else {
     redirect("UserController/login");
 }
@@ -26,7 +27,7 @@ if (isset($this->session->userdata['logged_in'])) {
     <div class="col-md-8" style="margin-left: 16%">
         <div style="background: #fff; border-radius: 5px;height: 90%">
             <?php
-            if (isset($followers)) {
+            if (isset($followers) && isset($flag)) {
                 if(count($followers) == 0){
                     echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;text-align: center">';
                     echo "No users found !";
@@ -47,6 +48,26 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '<div class="col-md-12" style="text-align: left">';
                         echo $follower->getFirstName() . " " . $follower->getLastName();
                         echo '</div>';
+                        echo '<br/>';
+                        switch ($flag) {
+                            case "friends":
+                                echo '<div class="col-md-12" style="text-align: left">';
+                                echo '<button onclick="location.href=\'/CWOne/index.php/NetworkController/friendUnfollowUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Unfollow</button>';
+                                echo '</div>';
+                                break;
+                            case "follower":
+                                echo '<div class="col-md-12" style="text-align: left">';
+                                echo '<button onclick="location.href=\'/CWOne/index.php/NetworkController/followUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Follow</button>';
+                                echo '</div>';
+                                break;
+                            case "following":
+                                echo '<div class="col-md-12" style="text-align: left">';
+                                echo '<button onclick="location.href=\'/CWOne/index.php/NetworkController/unfollowUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Unfollow</button>';
+                                echo '</div>';
+                                break;
+                            default:
+                                echo "";
+                        }
                         echo '</div>';
                         echo '</div>';
                         echo '</div>';

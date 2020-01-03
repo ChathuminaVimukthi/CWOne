@@ -17,7 +17,11 @@ class NetworkManager extends CI_Model
 
         if ($query->num_rows() != 0) {
             foreach ($query->result() as $row) {
-                $followerDataFound[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                if($this->checkFriends($userid,$row->UserId) === 'friends'){
+
+                }else{
+                    $followerDataFound[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                }
             }
             return $followerDataFound;
         } else {
@@ -53,7 +57,14 @@ class NetworkManager extends CI_Model
             $queryTwo = $this->db->get();
 
             $followers = array();
+            $friends = array();
+            $follower = array();
             foreach ($queryTwo->result() as $row){
+                if($this->checkFriends($userid,$row->UserId) === 'friends'){
+                    $friends[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                }else{
+                    $follower[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                }
                 $followers[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
             }
 
@@ -61,7 +72,8 @@ class NetworkManager extends CI_Model
                 return $obj_one->getUserId() - $obj_two->getUserId();
             });
             $searchResult = array(
-                'followers' => $followers,
+                'friends' => $friends,
+                'followers' => $follower,
                 'others' => $others
             );
             return $searchResult;
@@ -92,11 +104,36 @@ class NetworkManager extends CI_Model
 
         if ($query->num_rows() != 0) {
             foreach ($query->result() as $row) {
-                $followerDataFound[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                if($this->checkFriends($userid,$row->UserId) === 'friends'){
+
+                }else{
+                    $followerDataFound[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                }
             }
             return $followerDataFound;
         } else {
             return $followerDataFound;
+        }
+    }
+
+    function getFriends($userid){
+        $this->db->select('Users.*');
+        $this->db->from('Users');
+        $this->db->join('Network', 'Network.Followed_Id = Users.UserId');
+        $this->db->where('Network.Follower_Id', $userid);
+        $query = $this->db->get();
+
+        $friendDataFound = array();
+
+        if ($query->num_rows() != 0) {
+            foreach ($query->result() as $row) {
+                if($this->checkFriends($userid,$row->UserId) === 'friends'){
+                    $friendDataFound[] = new User($row->UserId, $row->UserName, $row->FirstName, $row->LastName, $row->Avatar);
+                }
+            }
+            return $friendDataFound;
+        } else {
+            return $friendDataFound;
         }
     }
 

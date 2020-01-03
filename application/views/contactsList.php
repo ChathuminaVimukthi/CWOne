@@ -24,7 +24,8 @@ if (isset($this->session->userdata['logged_in'])) {
 <?php include('util/header.php'); ?>
 <div class="row second-body">
     <div class="col-md-2" style="width: 16%">
-        <div class="side-skirt" style="margin-left: 15px">
+        <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px">
+            <p style="text-align: center;padding-top: 5px;font-weight: bold">Favorites</p>
         </div>
     </div>
     <div class="col-md-10 contacts-background" style="padding: 0 !important;height: 100%">
@@ -119,8 +120,8 @@ if (isset($this->session->userdata['logged_in'])) {
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div class="modal-header" style="background: #3b5998;color: #fff">
+                        <button type="button" style="color: #fff" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Edit Contact</h4>
                     </div>
                     <div class="modal-body">
@@ -152,7 +153,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveEditedData">Save changes</button>
+                        <button type="button" style="background: #57b846 !important;" class="btn btn-primary" data-dismiss="modal" id="saveEditedData">Save changes</button>
                     </div>
                 </div>
 
@@ -160,9 +161,6 @@ if (isset($this->session->userdata['logged_in'])) {
         </div>
 
         <div class="displayContacts" id="displayContacts" style="padding: 10px">
-
-        </div>
-        <div style="padding: 10px;display: none" id="searchResults">
 
         </div>
     </div>
@@ -405,6 +403,21 @@ if (isset($this->session->userdata['logged_in'])) {
 
                 ;
                 self.$el.append(contact);
+
+                let tNames = c.get('tagNames');
+                if(tNames.includes('Favorite')){
+                    let favoriteContacts =
+                            "<hr style='margin-top: 3px;margin-bottom: 3px'/>"+
+                            "<div style='padding: 5px'>"+
+                            "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
+                            "<div class='col-md-8'>"+
+                            "<div style='' class='col-md-12 contactName'>"+c.get('firstName')+"</div>"+
+                            "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
+                            "</div>"+
+                            "</div>";
+                    let div = document.getElementById("favoriteContacts");
+                    div.innerHTML += favoriteContacts;
+                }
             });
 
         }

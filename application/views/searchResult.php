@@ -29,56 +29,92 @@ if (isset($this->session->userdata['logged_in'])) {
     <div class="col-md-8" style="margin-left: 16%">
         <div style="background: #fff; border-radius: 5px;height: 90%">
             <?php
-            if (isset($others) && isset($followers)) {
-                if(count($followers) == 0 && count($others) == 0){
+            if (isset($others) && isset($followers) && isset($friends)) {
+                if(count($followers) == 0 && count($others) == 0 && count($friends) == 0){
                     echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;text-align: center">';
                     echo "No users found !";
                     echo "</p>";
                 }else{
-                    echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Following</p>';
-                    foreach ($followers as $follower) {
-                        echo '<div class="col-md-6" style="padding-top: 15px">';
-                        echo '<div class="col-md-12 profile-container" style="padding: 15px">';
-                        echo '<div class="col-md-3">';
-                        echo '<img src="' . $follower->getUserAvatar() . '" style="height: 60px;width: 60px;border-radius: 100%">';
-                        echo '</div>';
-                        echo '<div class="col-md-9">';
-                        echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
-                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
-                        echo $follower->getUserName();
-                        echo '</div>';
-                        echo '</div>';
-                        echo '<div class="col-md-12" style="text-align: left">';
-                        echo $follower->getFirstName() . " " . $follower->getLastName();
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
+                    if(count($friends) > 0){
+                        echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Friends</p>';
+                        foreach ($friends as $follower) {
+                            echo '<div class="col-md-6" style="padding-top: 15px;">';
+                            echo '<div class="col-md-12 profile-container" style="padding: 15px">';
+                            echo '<div class="col-md-3">';
+                            echo '<img src="' . $follower->getUserAvatar() . '" style="height: 60px;width: 60px;border-radius: 100%">';
+                            echo '</div>';
+                            echo '<div class="col-md-9">';
+                            echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
+                            echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
+                            echo $follower->getUserName();
+                            echo '</div>';
+                            echo '</div>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo $follower->getFirstName() . " " . $follower->getLastName();
+                            echo '</div>';
+                            echo '<br/>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo '<button onclick="location.href=\'/CWOne/index.php/HomePageController/unfollowUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Unfollow</button>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
                     }
-                    echo '<hr style="background: #fff"/>';
-                    echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Others</p>';
-                    foreach ($others as $follower) {
-                        echo '<div class="col-md-6" style="padding-top: 15px;">';
-                        echo '<div class="col-md-12 profile-container" style="padding: 15px">';
-                        echo '<div class="col-md-3">';
-                        echo '<img src="' . $follower->getUserAvatar() . '" style="height: 60px;width: 60px;border-radius: 100%">';
-                        echo '</div>';
-                        echo '<div class="col-md-9">';
-                        echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
-                        echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
-                        echo $follower->getUserName();
-                        echo '</div>';
-                        echo '</div>';
-                        echo '<div class="col-md-12" style="text-align: left">';
-                        echo $follower->getFirstName() . " " . $follower->getLastName();
-                        echo '</div>';
-                        echo '<br/>';
-                        echo '<div class="col-md-12" style="text-align: left">';
-                        echo '<button onclick="location.href=\'/CWOne/index.php/HomePageController/followUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Follow</button>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
+
+                    if(count($followers) > 0){
+                        echo '<hr style="background: #fff"/>';
+                        echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Following</p>';
+                        foreach ($followers as $follower) {
+                            echo '<div class="col-md-6" style="padding-top: 15px;">';
+                            echo '<div class="col-md-12 profile-container" style="padding: 15px">';
+                            echo '<div class="col-md-3">';
+                            echo '<img src="' . $follower->getUserAvatar() . '" style="height: 60px;width: 60px;border-radius: 100%">';
+                            echo '</div>';
+                            echo '<div class="col-md-9">';
+                            echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
+                            echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
+                            echo $follower->getUserName();
+                            echo '</div>';
+                            echo '</div>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo $follower->getFirstName() . " " . $follower->getLastName();
+                            echo '</div>';
+                            echo '<br/>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo '<button onclick="location.href=\'/CWOne/index.php/HomePageController/unfollowUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Unfollow</button>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                    }
+                    if(count($others) > 0){
+                        echo '<hr style="background: #fff"/>';
+                        echo '<p style="padding: 15px 15px 0 15px;font-size: 20px;margin: 0 !important;">Others</p>';
+                        foreach ($others as $follower) {
+                            echo '<div class="col-md-6" style="padding-top: 15px;">';
+                            echo '<div class="col-md-12 profile-container" style="padding: 15px">';
+                            echo '<div class="col-md-3">';
+                            echo '<img src="' . $follower->getUserAvatar() . '" style="height: 60px;width: 60px;border-radius: 100%">';
+                            echo '</div>';
+                            echo '<div class="col-md-9">';
+                            echo '<div class="col-md-12" style="font-weight: bold;font-size: medium;">';
+                            echo '<div style="cursor: pointer" onclick="location.href=\'/CWOne/index.php/ProfileController/loadUserPage?USERID='.$follower->getUserId().'&USERNAME='.$follower->getUserName().'\'">';
+                            echo $follower->getUserName();
+                            echo '</div>';
+                            echo '</div>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo $follower->getFirstName() . " " . $follower->getLastName();
+                            echo '</div>';
+                            echo '<br/>';
+                            echo '<div class="col-md-12" style="text-align: left">';
+                            echo '<button onclick="location.href=\'/CWOne/index.php/HomePageController/followUser?USERID='.$userId.'&FOLLOWEDID='.$follower->getUserId().'\'" class="follow-btn">Follow</button>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
                     }
                 }
 

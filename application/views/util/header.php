@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="navbar-header col-md-1">
             <a class="navbar-brand" style="color: #ffffff"
-               href="<?php echo base_url(); ?>index.php/HomePageController/">MUSICS</a>
+               href="<?php echo base_url(); ?>index.php/HomePageController/">BEBOP</a>
         </div>
         <form class="navbar-form navbar-left" id="navBarSearchForm" action="/CWOne/index.php/HomePageController/search"
               method=POST>
