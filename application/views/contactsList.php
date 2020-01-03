@@ -397,21 +397,6 @@ if (isset($this->session->userdata['logged_in'])) {
 
                     ;
                     self.$el.append(contact);
-
-                    let tNames = c.get('tagNames');
-                    if(tNames.includes('Favorite')){
-                        let favoriteContacts =
-                            "<hr style='margin-top: 3px;margin-bottom: 3px'/>"+
-                            "<div style='padding: 5px'>"+
-                            "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
-                            "<div class='col-md-8'>"+
-                            "<div style='' class='col-md-12 contactName'>"+c.get('firstName')+"</div>"+
-                            "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
-                            "</div>"+
-                            "</div>";
-                        let div = document.getElementById("favoriteContacts");
-                        div.innerHTML += favoriteContacts;
-                    }
                 }
             });
 
@@ -515,7 +500,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     firstName: firstName.capitalize(),
                     lastName: lastName.capitalize(),
                     email: email,
-                    mobileNumber: mobileNumber,
+                    mobileNumber: parseInt(mobileNumber),
                     tags: tags
                 });
                 contact.save();
@@ -525,7 +510,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     firstName: firstName.capitalize(),
                     lastName: lastName.capitalize(),
                     email: email,
-                    mobileNumber: mobileNumber,
+                    mobileNumber: parseInt(mobileNumber),
                     tagIds: tags,
                     tagNames: tagName
                 })
@@ -550,14 +535,16 @@ if (isset($this->session->userdata['logged_in'])) {
         searchContacts: function () {
             contactCollection.reset();
             let searchString = $('#searchContacts').val();
+            let strSplit = searchString.split(" ");
+
             $("#searchResults").html("");
-            let contactsByName = new Contacts({caseId:1,lastName:searchString});
+            let contactsByName = new Contacts({caseId:1,lastName:strSplit});
             contactsByName.fetchByName();
             let validity = searchResponse['emptyMsg'];
             if(validity === "false"){
                 document.getElementById("showAlert").style.display="block";
                 let alert = "<div style='margin: 10px' class='alert alert-danger alert-dismissible' role='alert'>" +
-                    "<button type='button' id='closeAlert' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+                    "<button type='button' id='closeAlert' onclick='window.location.reload();' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
                     "<strong>No search results found!</strong></div>";
                 let div = document.getElementById("showAlert");
                 div.innerHTML += alert;

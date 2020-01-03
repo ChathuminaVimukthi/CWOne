@@ -51,66 +51,48 @@ class ContactsManager extends CI_Model
     }
 
     public function getContactByName($userId,$contactName){
-        $this->db->select('*');
-        $this->db->from('Contacts');
-        $this->db->where('UserId', $userId);
-        $this->db->where('LastName', $contactName);
-        $this->db->order_by("FirstName", "ASC");
-        $query = $this->db->get();
+        $this->db->select('Contacts.*, GROUP_CONCAT(DISTINCT ContactTags.Id) as TagCodeList, GROUP_CONCAT(DISTINCT ContactTags.Name) as TagNameList');
+        if (count($contactName) > 0) {
+            foreach ($contactName as $m) {
+                $this->db->or_where('LastName', $m);
+                $this->db->where('UserId', $userId);
+            }
+        }
+        $this->db->join('TagsSelected', 'TagsSelected.Contact_Id = Contacts.Id', 'left outer');
+        $this->db->join('ContactTags', 'ContactTags.Id = TagsSelected.Tag_Id', 'left outer');
+        $this->db->group_by('Contacts.Id');
+        $resultLastName = $this->db->get('Contacts');
+        $contactFound = array();
+        if ($resultLastName->num_rows() != 0) {
+            foreach ($resultLastName->result() as $row) {
+                $tagList = explode(",", $row->TagCodeList);
+                $tagnamelist = explode(",", $row->TagNameList);
 
-        $contactsArr = array();
-        if ($query->num_rows() > 0) {
-            foreach ($query->result() as $row) {
-                $this->db->select('ContactTags.*');
-                $this->db->from('ContactTags');
-                $this->db->join('TagsSelected', 'ContactTags.Id = TagsSelected.Tag_Id');
-                $this->db->join('Contacts', 'Contacts.Id = TagsSelected.Contact_Id');
-                $this->db->where('Contacts.Id', $row->Id);
-                $queryTwo = $this->db->get();
-                $tags = $queryTwo->result();
-                $tagIds = array();
-                $tagNames = array();
-                foreach ($tags as $tag){
-                    $tagIds[] = $tag->Id;
-                    $tagNames[] = $tag->Name;
-                }
-
-                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode);
+                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode);
             }
         }
 
-        $this->db->select('Contacts.*', FALSE);
-        $this->db->from('Contacts');
-        $this->db->join('TagsSelected', 'TagsSelected.Contact_Id  = Contacts.Id', 'left');
-        $this->db->join('ContactTags', 'ContactTags.Id  = TagsSelected.Tag_Id', 'inner');
-        $this->db->where('Contacts.UserId', $userId);
-        $this->db->where('ContactTags.Name', $contactName);
+        $this->db->select('Contacts.*, GROUP_CONCAT(DISTINCT ContactTags.Id) as TagCodeList, GROUP_CONCAT(DISTINCT ContactTags.Name) as TagNameList');
+        if (count($contactName) > 0) {
+            foreach ($contactName as $m) {
+                $this->db->or_where('ContactTags.Name', $m);
+                $this->db->where('UserId', $userId);
+            }
+        }
+        $this->db->join('TagsSelected', 'TagsSelected.Contact_Id = Contacts.Id', 'left outer');
+        $this->db->join('ContactTags', 'ContactTags.Id = TagsSelected.Tag_Id', 'left outer');
+        $this->db->group_by('Contacts.Id');
+        $resultLastName = $this->db->get('Contacts');
+        if ($resultLastName->num_rows() != 0) {
+            foreach ($resultLastName->result() as $row) {
+                $tagList = explode(",", $row->TagCodeList);
+                $tagnamelist = explode(",", $row->TagNameList);
 
-        $query_result = $this->db->get();
-        $result = $query_result->result();
-
-        if($query_result->num_rows() > 0){
-            foreach ($result as $row) {
-                $this->db->select('ContactTags.*');
-                $this->db->from('ContactTags');
-                $this->db->join('TagsSelected', 'ContactTags.Id = TagsSelected.Tag_Id');
-                $this->db->join('Contacts', 'Contacts.Id = TagsSelected.Contact_Id');
-                $this->db->where('Contacts.Id', $row->Id);
-                $queryThree = $this->db->get();
-                $tags = $queryThree->result();
-                $tagIds = array();
-                $tagNames = array();
-                foreach ($tags as $tag){
-                    $tagIds[] = $tag->Id;
-                    $tagNames[] = $tag->Name;
-                }
-
-                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode);
+                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode);
             }
         }
 
-        return $contactsArr;
-
+        return $contactFound;
     }
 
     public function getContactById($userId,$contactId){
