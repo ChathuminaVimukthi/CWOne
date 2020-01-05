@@ -2,7 +2,6 @@
 
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
-
 class ContactsController extends REST_Controller
 {
     public function __construct()
@@ -73,12 +72,6 @@ class ContactsController extends REST_Controller
                     array_push($contacts,$data);
                 }
                 $this->response( $contacts, 200 );
-        }
-
-        if ($firstName === false) {
-
-        } else {
-
         }
     }
 
@@ -175,5 +168,27 @@ class ContactsController extends REST_Controller
 
         $updateData = $this->ContactsManager->updateContact($data,$tags);
 
+    }
+
+    public function tag_get(){
+        $result = $this->ContactsManager->getContactTags();
+        $tagArray = array();
+        foreach ($result as $row){
+            $data = array(
+                'id' => $row->getId(),
+                'tagName' => $row->getGenre()
+            );
+            array_push($tagArray,$data);
+        }
+        $this->response( $tagArray, 200 );
+    }
+
+    public function tag_post(){
+        $tagName = $this->post('tagName');
+        $data = array(
+            'Name' => $tagName
+        );
+        $insertedId = $this->ContactsManager->saveTag($data);
+        $this->response( $insertedId, 200 );
     }
 }

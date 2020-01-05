@@ -24,9 +24,21 @@ if (isset($this->session->userdata['logged_in'])) {
 <?php include('util/header.php'); ?>
 <div class="row second-body">
     <div class="col-md-2" style="width: 16%">
+        <?php include('util/profileCard.php'); ?>
+        <br/>
         <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px">
-            <p style="text-align: center;padding-top: 5px;font-weight: bold">Favorites</p>
+            <p style="text-align: center;padding-top: 5px;font-weight: bold">Add New Tag</p>
+            <hr style="margin-top: 0px;margin-bottom: 0px"/>
+            <div id="addTags" style="padding: 5px">
+                <input type=text class="input form-control" id="tagName" name=TAGNAME placeholder="Tag Name">
+                <div class="form-group container-login-form-btn" style="margin-top: 5px">
+                    <button class="login-form-btn" id="saveTag" style="width: 50%;height:40px !important;">
+                        Add
+                    </button>
+                </div>
+            </div>
         </div>
+
     </div>
     <div class="col-md-10 contacts-background" style="padding: 0 !important;height: 100%">
         <div>
@@ -48,7 +60,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     </ul>
                     <div class="navbar-form navbar-right" id="contactsSearchForm">
                         <div class="input-group">
-                            <input type="text" id="searchContacts" class="form-control" placeholder="Search contacts..."
+                            <input type="text" id="searchContacts" class="form-control" placeholder="Search contacts by Last Name or Tag Name..."
                                    name=SEARCHTXT>
                             <div class="input-group-btn form-group">
                                 <button disabled class="btn btn-default" id="searchContactsBtn"
@@ -62,8 +74,6 @@ if (isset($this->session->userdata['logged_in'])) {
             </nav>
         </div>
         <hr style="margin-top: 5px !important;margin-bottom: 5px !important;"/>
-
-        <div id="showAlert" style="display: none"></div>
 
         <div class="addEditContact collapse" id="addEditContact">
             <div style="margin: 0 10px 15px 10px;">
@@ -100,8 +110,7 @@ if (isset($this->session->userdata['logged_in'])) {
                             }
                             ?>
                         </select>
-                        <div style="color: #990000">
-                            <?php echo form_error('genre'); ?>
+                        <div id="drpErr">
                         </div>
                     </div>
                 </div>
@@ -148,6 +157,8 @@ if (isset($this->session->userdata['logged_in'])) {
                                 }
                                 ?>
                             </select>
+                            <div id="drpErr">
+                            </div>
                         </div>
                     </div>
 
@@ -160,6 +171,16 @@ if (isset($this->session->userdata['logged_in'])) {
             </div>
         </div>
 
+        <div style="background: #fff">
+            <div class='col-md-12' style='margin-bottom: 5px'>
+                <div style='text-align: center' class='col-md-3'><i class="fa fa-address-card-o icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-2'><i class="fa fa-envelope icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-2'><i class="fa fa-phone-square icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-2'><i class="fa fa-tags icons" aria-hidden="true"></i></div>
+            </div>
+            <hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>
+        </div>
+        <div id="showAlert" style="display: none"></div>
         <div class="displayContacts" id="displayContacts" style="padding: 10px;background: #fff">
 
         </div>
@@ -193,12 +214,13 @@ if (isset($this->session->userdata['logged_in'])) {
             var last_name = $('#lastName').val();
             var email = $('#email').val();
             var password = $('#mobileNumber').val();
+            var dropDown = $('#contactTags').val();
 
             let firstNameValid = true;
             let lastNameValid = true;
             let emailValid = true;
             let mobileNumberValid = true;
-            console.log('sdvsdv');
+            let dropDownValid = true;
 
             $(".error").remove();
 
@@ -225,10 +247,28 @@ if (isset($this->session->userdata['logged_in'])) {
                 $('#mobileNumber').after('<span style="color: #990000" class="error">Mobile Number must be 10 characters long</span>');
                 mobileNumberValid = false;
             }
+            if(!dropDown.length > 0){
+                $('#drpErr').after('<span style="color: #990000" class="error">Select at least one option</span>');
+                dropDownValid = false;
+            }
 
-            checkValidity = !(firstNameValid === false || lastNameValid === false || emailValid === false || mobileNumberValid === false);
+            checkValidity = !(firstNameValid === false || lastNameValid === false || emailValid === false || mobileNumberValid === false || dropDownValid === false);
         });
 
+    });
+
+    let checkValidityOfAddTag = true;
+
+    $(document).ready(function () {
+        $('#saveTag').click(function (e) {
+            e.preventDefault();
+            var tagName = $('#tagName').val();
+            $(".error").remove();
+            if (tagName.length < 1) {
+                $('#tagName').after('<div><span style="color: #990000" class="error">This field is required</span></div>');
+                checkValidityOfAddTag = false;
+            }
+        });
     });
 
     let checkValidityOfEditedData = true;
@@ -241,11 +281,13 @@ if (isset($this->session->userdata['logged_in'])) {
             var last_name = $('#editLastName').val();
             var email = $('#editEmail').val();
             var password = $('#editMobileNumber').val();
+            var dropDown = $('#editContactTags').val();
 
             let firstNameValid = true;
             let lastNameValid = true;
             let emailValid = true;
             let mobileNumberValid = true;
+            let dropDownValid = true;
 
             $(".error").remove();
 
@@ -273,7 +315,12 @@ if (isset($this->session->userdata['logged_in'])) {
                 mobileNumberValid = false;
             }
 
-            checkValidityOfEditedData = !(firstNameValid === false || lastNameValid === false || emailValid === false || mobileNumberValid === false);
+            if(!dropDown.length > 0){
+                $('#editContactTags').before('<span style="color: #990000" class="error">Select at least one option</span>');
+                dropDownValid = false;
+            }
+
+            checkValidityOfEditedData = !(firstNameValid === false || lastNameValid === false || emailValid === false || mobileNumberValid === false || dropDownValid === false);
         });
 
     });
@@ -460,13 +507,11 @@ if (isset($this->session->userdata['logged_in'])) {
                 $('#displayContacts').empty();
                 contactCollection.add(contacts);
 
-                $('#saveContactBtn').click(function (e) {
-                    e.preventDefault();
-                    $('#firstName').val('');
-                    $('#lastName').val('');
-                    $('#email').val('');
-                    $('#mobileNumber').val('');
-                });
+                $('#firstName').val('');
+                $('#lastName').val('');
+                $('#email').val('');
+                $('#mobileNumber').val('');
+
             }
         }
     });
@@ -540,14 +585,30 @@ if (isset($this->session->userdata['logged_in'])) {
             $("#searchResults").html("");
             let contactsByName = new Contacts({caseId:1,lastName:strSplit});
             contactsByName.fetchByName();
+            let noResult = "No search results found for ";
             let validity = searchResponse['emptyMsg'];
             if(validity === "false"){
                 document.getElementById("showAlert").style.display="block";
                 let alert = "<div style='margin: 10px' class='alert alert-danger alert-dismissible' role='alert'>" +
-                    "<button type='button' id='closeAlert' onclick='window.location.reload();' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-                    "<strong>No search results found!</strong></div>";
+                    "<button type='button' id='closeAlert' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+                    "<strong>"+noResult+searchString +"</strong></div>";
                 let div = document.getElementById("showAlert");
                 div.innerHTML += alert;
+                contactCollection.fetch({async:false});
+            }else{
+                for (let i = 0; i < strSplit.length; i++){
+                    var src_str = $("#displayContacts").html();
+                    var term = strSplit[i];
+                    term = term.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
+                    var pattern = new RegExp("("+term+")", "gi");
+
+                    var color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+
+                    src_str = src_str.replace(pattern, "<mark style='"+"background:"+color+"; border-radius: 8px'>$1</mark>");
+                    src_str = src_str.replace(/(<mark>[^<>]*)((<[^>]+>)+)([^<>]*<\/mark>)/,"$1</mark>$2<mark>$4");
+
+                    $("#displayContacts").html(src_str);
+                }
             }
         }
     });

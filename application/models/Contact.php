@@ -11,8 +11,9 @@ class Contact
     private $tagNames;
     private $tagIds;
     private $color;
+    private $flag;
 
-    public function __construct($id, $firstName, $lastName, $email, $mobileNumber, $tagNames,$tagIds,$color)
+    public function __construct($id, $firstName, $lastName, $email, $mobileNumber, $tagNames,$tagIds,$color,$flag)
     {
         $this->id = $id;
         $this->firstName = $firstName;
@@ -22,7 +23,26 @@ class Contact
         $this->tagNames = $tagNames;
         $this->tagIds = $tagIds;
         $this->color = $color;
+        $this->flag = $flag;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFlag()
+    {
+        return $this->flag;
+    }
+
+    /**
+     * @param mixed $flag
+     */
+    public function setFlag($flag)
+    {
+        $this->flag = $flag;
+    }
+
+
 
     /**
      * @return mixed

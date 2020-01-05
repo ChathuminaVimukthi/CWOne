@@ -44,7 +44,7 @@ class ContactsManager extends CI_Model
                     $tagNames[] = $tag->Name;
                 }
 
-                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode);
+                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode, "");
             }
             return $contactsArr;
         }
@@ -68,7 +68,7 @@ class ContactsManager extends CI_Model
                 $tagList = explode(",", $row->TagCodeList);
                 $tagnamelist = explode(",", $row->TagNameList);
 
-                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode);
+                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode,"1");
             }
         }
 
@@ -85,27 +85,7 @@ class ContactsManager extends CI_Model
         $resultLastName = $this->db->get('Contacts');
         if ($resultLastName->num_rows() != 0) {
             foreach ($resultLastName->result() as $row) {
-                $tagList = explode(",", $row->TagCodeList);
-                $tagnamelist = explode(",", $row->TagNameList);
-
-                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode);
-            }
-        }
-
-        return $contactFound;
-    }
-
-    public function getContactById($userId,$contactId){
-        $this->db->select('*');
-        $this->db->from('Contacts');
-        $this->db->where('UserId', $userId);
-        $this->db->where('Id', $contactId);
-        $query = $this->db->get();
-
-        $contactsArr = array();
-        if ($query->num_rows() > 0) {
-            foreach ($query->result() as $row) {
-                $this->db->select('*');
+                $this->db->select('ContactTags.*');
                 $this->db->from('ContactTags');
                 $this->db->join('TagsSelected', 'ContactTags.Id = TagsSelected.Tag_Id');
                 $this->db->join('Contacts', 'Contacts.Id = TagsSelected.Contact_Id');
@@ -119,10 +99,11 @@ class ContactsManager extends CI_Model
                     $tagNames[] = $tag->Name;
                 }
 
-                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode);
+                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagNames,$tagIds, $row->ColorCode ,"2");
             }
-            return $contactsArr;
         }
+
+        return $contactFound;
     }
 
     public function saveContact($data,$tags){
@@ -136,6 +117,11 @@ class ContactsManager extends CI_Model
             }
             return $insert_id;
         }
+    }
+
+    public function saveTag($tagName){
+        $this->db->insert('ContactTags', $tagName);
+        return $this->db->insert_id();
     }
 
     public function updateContact($data, $tags){
