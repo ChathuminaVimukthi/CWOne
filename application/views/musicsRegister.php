@@ -85,8 +85,7 @@ if (isset($this->session->userdata['logged_in'])) {
                             }
                             ?>
                         </select>
-                        <div style="color: #990000">
-                            <?php echo form_error('genre'); ?>
+                        <div style="color: #990000" id="showError">
                         </div>
                     </div>
                 </div>
@@ -94,7 +93,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
             </div>
             <div class="form-group container-login-form-btn">
-                <button class="login-form-btn" style="width: 50%" type="submit">
+                <button class="login-form-btn" style="width: 50%" id="submitBtn" type="submit">
                     Register
                 </button>
             </div>
@@ -149,6 +148,13 @@ if (isset($this->session->userdata['logged_in'])) {
             }
         }
     });
+
+    $('#submitBtn').click(function () {
+        if($("#musicGenre").val().length == 0){
+            let error = '<div><span style="color: #990000" class="error">Enter a valid email</span></div>';
+            $('#showError').append(error);
+        }
+    })
 
 </script>
 </body>

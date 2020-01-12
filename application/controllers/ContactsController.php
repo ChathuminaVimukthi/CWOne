@@ -42,7 +42,8 @@ class ContactsController extends REST_Controller
                         'mobileNumber' => $row->getMobileNumber(),
                         'tagIds' => $row->getTagIds(),
                         'tagNames' => $row->getTagNames(),
-                        'color' => $row->getColor()
+                        'color' => $row->getColor(),
+                        'flag' => $row->getFlag()
                     );
                     array_push($contacts,$data);
                 }
