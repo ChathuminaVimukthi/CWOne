@@ -26,17 +26,8 @@ if (isset($this->session->userdata['logged_in'])) {
     <div class="col-md-2" style="width: 16%">
         <?php include('util/profileCard.php'); ?>
         <br/>
-        <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px">
-            <p style="text-align: center;padding-top: 5px;font-weight: bold">Add New Tag</p>
-            <hr style="margin-top: 0px;margin-bottom: 0px"/>
-            <div id="addTags" style="padding: 5px">
-                <input type=text class="input form-control" id="tagName" name=TAGNAME placeholder="Tag Name">
-                <div class="form-group container-login-form-btn" style="margin-top: 5px">
-                    <button class="login-form-btn" id="saveTag" style="width: 50%;height:40px !important;">
-                        Add
-                    </button>
-                </div>
-            </div>
+        <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px;overflow-y:auto;max-height: 200px">
+
         </div>
 
     </div>
@@ -183,6 +174,14 @@ if (isset($this->session->userdata['logged_in'])) {
         <div id="showAlert" style="display: none"></div>
         <div class="displayContacts" id="displayContacts" style="padding: 10px;background: #fff">
 
+        </div>
+        <div class="displayContacts" style="padding: 10px;background: #fff" id="searchRes">
+            <div id="fromLastName" hidden>
+                <div id="lastNameRes"></div>
+            </div>
+            <div id="fromTags" hidden>
+                <div id="tagRes"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -386,7 +385,7 @@ if (isset($this->session->userdata['logged_in'])) {
         model:contactCollection,
         initialize: function () {
             contactCollection.fetch({async:false});
-            this.byNameAscd();
+            //this.byNameAscd();
             this.render();
             this.listenTo(contactCollection, 'add remove change sort', this.render);
         },
@@ -427,6 +426,9 @@ if (isset($this->session->userdata['logged_in'])) {
         render: function () {
             let self = this;
             $("#displayContacts").html("");
+            $('#favoriteContacts').html("");
+            let favorties = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Favorite Contacts</p>\n' +
+                '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
             contactCollection.each(function (c) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
@@ -443,10 +445,24 @@ if (isset($this->session->userdata['logged_in'])) {
                         "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
 
                     ;
+
+                    let tNames = c.get('tagNames');
+                    if(tNames.includes('Favorite')){
+                        let favoriteContacts =
+                            "<div style='padding: 5px'>"+
+                            "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
+                            "<div class='col-md-8'>"+
+                            "<div style='' class='col-md-12 contactName'>"+c.get('firstName')+"</div>"+
+                            "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
+                            "</div>"+
+                            "</div>";
+                        favorties += favoriteContacts;
+                    }
                     self.$el.append(contact);
                 }
             });
 
+            $('#favoriteContacts').append(favorties);
         }
     });
 
@@ -565,8 +581,26 @@ if (isset($this->session->userdata['logged_in'])) {
 
     let updateContactBtn = new UpdateContactBtn();
 
+    let SearchContacts = Backbone.Model.extend({
+        url: function () {
+            return "<?php echo base_url() ?>index.php/ContactsController/contact";
+        },
+        idAttribute: 'flagg'
+    });
+
+    let searchContacts = new SearchContacts();
+
+    let SearchCollection = Backbone.Collection.extend({
+        model:SearchContacts,
+        url: function () {
+            return "<?php echo base_url() ?>index.php/ContactsController/contact";
+        }
+    });
+    let searchCollection = new SearchCollection();
+
     //search button
     let SearchContactsBtn =  Backbone.View.extend({
+        model: searchCollection,
         el: "#contactsSearchForm",
         initialize: function () {
 
@@ -578,13 +612,17 @@ if (isset($this->session->userdata['logged_in'])) {
             "click #searchContactsBtn": "searchContacts"
         },
         searchContacts: function () {
-            contactCollection.reset();
             let searchString = $('#searchContacts').val();
             let strSplit = searchString.split(" ");
 
-            $("#searchResults").html("");
-            let contactsByName = new Contacts({caseId:1,lastName:strSplit});
-            contactsByName.fetchByName();
+            searchCollection.fetch({
+                async:false,
+                data: $.param({caseId: 1,lastName: strSplit}),
+                success: function (searchContacts,response) {
+                    searchResponse = response;
+                }
+            });
+
             let noResult = "No search results found for ";
             let validity = searchResponse['emptyMsg'];
             if(validity === "false"){
@@ -596,19 +634,42 @@ if (isset($this->session->userdata['logged_in'])) {
                 div.innerHTML += alert;
                 contactCollection.fetch({async:false});
             }else{
-                for (let i = 0; i < strSplit.length; i++){
-                    var src_str = $("#displayContacts").html();
-                    var term = strSplit[i];
-                    term = term.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
-                    var pattern = new RegExp("("+term+")", "gi");
+                let contactByTag = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Contacts by Tag Name</p>\n' +
+                    '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
+                let contactByName ='<p style="text-align: center;padding-top: 5px;font-weight: bold">Contacts by Last Name</p>\n' +
+                    '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
+                $('#lastNameRes').html("");
+                $('#tagRes').html("");
+                searchCollection.each(function (c) {
+                    let name = c.get('firstName');
+                    let contact =" <div class='col-md-12' style='margin-bottom: 5px'>" +
+                        "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
+                        "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
+                        "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
+                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fa fa-pencil-square-o' aria-hidden='true'></i></button>"+
+                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
+                        "</div>"+
+                        "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
 
-                    var color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+                    ;
 
-                    src_str = src_str.replace(pattern, "<mark style='"+"background:"+color+"; border-radius: 8px'>$1</mark>");
-                    src_str = src_str.replace(/(<mark>[^<>]*)((<[^>]+>)+)([^<>]*<\/mark>)/,"$1</mark>$2<mark>$4");
+                    console.log(c.get('lastName'));
 
-                    $("#displayContacts").html(src_str);
-                }
+                    if (c.get('flag') === "1") {
+                        contactByName += contact;
+                        $("#fromLastName").show();
+                    }
+
+                    if (c.get('flag') === "2") {
+                        contactByTag += contact;
+                        $("#fromTags").show();
+                    }
+                });
+
+                $("#lastNameRes").append(contactByName);
+                $("#tagRes").append(contactByTag);
             }
         }
     });
