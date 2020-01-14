@@ -54,7 +54,7 @@ class ContactsManager extends CI_Model
         $this->db->select('Contacts.*, GROUP_CONCAT(DISTINCT ContactTags.Id) as TagCodeList, GROUP_CONCAT(DISTINCT ContactTags.Name) as TagNameList');
         if (count($contactName) > 0) {
             foreach ($contactName as $m) {
-                $this->db->or_where('LastName', $m);
+                $this->db->or_like('LastName', $m);
                 $this->db->where('UserId', $userId);
             }
         }
@@ -75,7 +75,7 @@ class ContactsManager extends CI_Model
         $this->db->select('Contacts.*, GROUP_CONCAT(DISTINCT ContactTags.Id) as TagCodeList, GROUP_CONCAT(DISTINCT ContactTags.Name) as TagNameList');
         if (count($contactName) > 0) {
             foreach ($contactName as $m) {
-                $this->db->or_where('ContactTags.Name', $m);
+                $this->db->or_like('ContactTags.Name', $m);
                 $this->db->where('UserId', $userId);
             }
         }
