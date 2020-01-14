@@ -2,7 +2,7 @@
 
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
-class ContactsController extends REST_Controller
+class Contacts extends REST_Controller
 {
     public function __construct()
     {

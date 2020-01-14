@@ -31,7 +31,7 @@
         </ul>
         <ul class="nav navbar-nav">
             <li class="active"><a style="color: #ffffff"
-                                  href="<?php echo base_url(); ?>index.php/ContactsController">Contact List</a></li>
+                                  href="<?php echo base_url(); ?>index.php/Contacts">Contact List</a></li>
         </ul>
         <!--        <ul class="nav navbar-nav">-->
         <!--            <li class="active"><a href="#" style="color: #ffffff">Home</a></li>-->

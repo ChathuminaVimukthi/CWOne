@@ -26,17 +26,8 @@ if (isset($this->session->userdata['logged_in'])) {
     <div class="col-md-2" style="width: 16%">
         <?php include('util/profileCard.php'); ?>
         <br/>
-        <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px">
-            <p style="text-align: center;padding-top: 5px;font-weight: bold">Add New Tag</p>
-            <hr style="margin-top: 0px;margin-bottom: 0px"/>
-            <div id="addTags" style="padding: 5px">
-                <input type=text class="input form-control" id="tagName" name=TAGNAME placeholder="Tag Name">
-                <div class="form-group container-login-form-btn" style="margin-top: 5px">
-                    <button class="login-form-btn" id="saveTag" style="width: 50%;height:40px !important;">
-                        Add
-                    </button>
-                </div>
-            </div>
+        <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px;overflow-y:auto;max-height: 200px">
+
         </div>
 
     </div>
@@ -47,7 +38,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     <div class="navbar-header col-md-4" style="padding: 0 !important;">
                         <a class="navbar-brand" style="color: #fff; background: #8B9DC3;border-radius: 30px"
                            id="contactListBtn"
-                           href="<?php echo base_url(); ?>index.php/ContactsController/">Contacts List</a>
+                           href="<?php echo base_url(); ?>index.php/Contacts/">Contacts List</a>
                     </div>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -336,7 +327,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
     let Contacts = Backbone.Model.extend({
         url: function () {
-            return "<?php echo base_url() ?>index.php/ContactsController/contact";
+            return "<?php echo base_url() ?>index.php/Contacts/contact";
         },
         idAttribute: 'id',
         defaults:{
@@ -367,7 +358,7 @@ if (isset($this->session->userdata['logged_in'])) {
     let ContactCollection = Backbone.Collection.extend({
         model:Contacts,
         url: function () {
-            return "<?php echo base_url() ?>index.php/ContactsController/contact";
+            return "<?php echo base_url() ?>index.php/Contacts/contact";
         }
     });
 
@@ -427,6 +418,9 @@ if (isset($this->session->userdata['logged_in'])) {
         render: function () {
             let self = this;
             $("#displayContacts").html("");
+            $('#favoriteContacts').html("");
+            let favorties = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Favorite Contacts</p>\n' +
+                '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
             contactCollection.each(function (c) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
@@ -443,10 +437,24 @@ if (isset($this->session->userdata['logged_in'])) {
                         "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
 
                     ;
+
+                    let tNames = c.get('tagNames');
+                    if(tNames.includes('Favorite')){
+                        let favoriteContacts =
+                            "<div style='padding: 5px'>"+
+                            "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
+                            "<div class='col-md-8'>"+
+                            "<div style='' class='col-md-12 contactName'>"+c.get('firstName')+"</div>"+
+                            "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
+                            "</div>"+
+                            "</div>";
+                        favorties += favoriteContacts;
+                    }
                     self.$el.append(contact);
                 }
             });
 
+            $('#favoriteContacts').append(favorties);
         }
     });
 
