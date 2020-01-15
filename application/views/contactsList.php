@@ -12,7 +12,7 @@ if (isset($this->session->userdata['logged_in'])) {
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/main.css">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/contactsList.css">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/multiselect.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/underscore-min.js"></script>
@@ -164,12 +164,12 @@ if (isset($this->session->userdata['logged_in'])) {
 
         <div style="background: #fff">
             <div class='col-md-12' style='margin-bottom: 5px'>
-                <div style='text-align: center' class='col-md-3'><i class="fa fa-address-card-o icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-3'><i class="fas fa-address-card icons"></i></div>
                 <div style='text-align: center' class='col-md-2'><i class="fa fa-envelope icons" aria-hidden="true"></i></div>
-                <div style='text-align: center' class='col-md-2'><i class="fa fa-phone-square icons" aria-hidden="true"></i></div>
-                <div style='text-align: center' class='col-md-2'><i class="fa fa-tags icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-2'><i class="fas fa-phone icons" aria-hidden="true"></i></div>
+                <div style='text-align: center' class='col-md-2'><i class="fas fa-tag icons" aria-hidden="true"></i></div>
             </div>
-            <hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>
+            <hr style='margin-top: 10px !important;margin-bottom: 0px !important;'/>
         </div>
         <div id="showAlert" style="display: none"></div>
         <div class="displayContacts" id="displayContacts" style="padding: 10px;background: #fff">
@@ -324,6 +324,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
     //Main Model
     let searchResponse = "";
+    let isSearch = false;
 
     let Contacts = Backbone.Model.extend({
         url: function () {
@@ -390,6 +391,11 @@ if (isset($this->session->userdata['logged_in'])) {
         },
         deleteContact: function (e){
             let contactId =  $(e.currentTarget).attr('value');
+            if(isSearch){
+                let dupContId = parseInt(contactId) + 0.5;
+                let deleteSvrContact =  new Contacts({id:dupContId});
+                contactCollection.remove(deleteSvrContact);
+            }
             let deleteSvrContact =  new Contacts({id:contactId});
             contactCollection.remove(deleteSvrContact);
             deleteSvrContact.deleteById();
@@ -421,6 +427,12 @@ if (isset($this->session->userdata['logged_in'])) {
             $('#favoriteContacts').html("");
             let favorties = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Favorite Contacts</p>\n' +
                 '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
+            let contByTag = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Contacts By Tag</p>\n' +
+                '<hr style="margin-top: 0px;margin-bottom: 5px"/>';
+            let contByName = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Contacts By Name</p>\n' +
+                '<hr style="margin-top: 0px;margin-bottom: 5px"/>';
+            let isName = false;
+            let isTag = false;
             contactCollection.each(function (c) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
@@ -431,12 +443,45 @@ if (isset($this->session->userdata['logged_in'])) {
                         "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
                         "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
                         "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
-                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fa fa-pencil-square-o' aria-hidden='true'></i></button>"+
+                        "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
                         "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
                         "</div>"+
                         "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
 
                     ;
+
+                    let flag = c.get('flag');
+
+                    switch (flag) {
+                        case "1":
+                            isName = true;
+                            let contId = c.get('id');
+                            if(!Number.isInteger(contId)){
+                                contId -= 0.5;
+                            }
+                            let conts =" <div class='col-md-12' style='margin-bottom: 5px'>" +
+                                "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
+                                "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
+                                "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
+                                "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
+                                "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
+                                "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
+                                "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
+                                "</div>"+
+                                "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
+
+                            ;
+                            contByName += conts;
+                            break;
+                        case "2":
+                            isTag = true;
+                            contByTag += contact;
+                            break;
+                        default:
+                            self.$el.append(contact);
+                            break;
+
+                    }
 
                     let tNames = c.get('tagNames');
                     if(tNames.includes('Favorite')){
@@ -450,10 +495,14 @@ if (isset($this->session->userdata['logged_in'])) {
                             "</div>";
                         favorties += favoriteContacts;
                     }
-                    self.$el.append(contact);
                 }
             });
-
+            if(isName === true){
+                $('#displayContacts').append(contByName);
+            }
+            if(isTag === true){
+                $('#displayContacts').append(contByTag);
+            }
             $('#favoriteContacts').append(favorties);
         }
     });
@@ -557,6 +606,19 @@ if (isset($this->session->userdata['logged_in'])) {
                     tags: tags
                 });
                 contact.save();
+                if(isSearch){
+                    let dupContId = parseInt(contactId) + 0.5;
+                    let dupCont = contactCollection.get(dupContId);
+                    dupCont.set({
+                        id: dupContId,
+                        firstName: firstName.capitalize(),
+                        lastName: lastName.capitalize(),
+                        email: email,
+                        mobileNumber: parseInt(mobileNumber),
+                        tagIds: tags,
+                        tagNames: tagName
+                    });
+                }
                 let cont = contactCollection.get(contactId);
                 cont.set({
                     id: contactId,
@@ -566,7 +628,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     mobileNumber: parseInt(mobileNumber),
                     tagIds: tags,
                     tagNames: tagName
-                })
+                });
             }
         }
     });
@@ -604,19 +666,7 @@ if (isset($this->session->userdata['logged_in'])) {
                 div.innerHTML += alert;
                 contactCollection.fetch({async:false});
             }else{
-                for (let i = 0; i < strSplit.length; i++){
-                    var src_str = $("#displayContacts").html();
-                    var term = strSplit[i];
-                    term = term.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
-                    var pattern = new RegExp("("+term+")", "gi");
-
-                    var color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
-
-                    src_str = src_str.replace(pattern, "<mark style='"+"background:"+color+"; border-radius: 8px'>$1</mark>");
-                    src_str = src_str.replace(/(<mark>[^<>]*)((<[^>]+>)+)([^<>]*<\/mark>)/,"$1</mark>$2<mark>$4");
-
-                    $("#displayContacts").html(src_str);
-                }
+                isSearch = true;
             }
         }
     });

@@ -50,6 +50,36 @@ class ContactsManager extends CI_Model
         }
     }
 
+    public function getContactsById($contId){
+        $this->db->select('*');
+        $this->db->from('Contacts');
+        $this->db->where('Id', $contId);
+        $this->db->order_by("FirstName", "ASC");
+        $query = $this->db->get();
+
+        $contactsArr = array();
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+                $this->db->select('ContactTags.*');
+                $this->db->from('ContactTags');
+                $this->db->join('TagsSelected', 'ContactTags.Id = TagsSelected.Tag_Id');
+                $this->db->join('Contacts', 'Contacts.Id = TagsSelected.Contact_Id');
+                $this->db->where('Contacts.Id', $row->Id);
+                $queryTwo = $this->db->get();
+                $tags = $queryTwo->result();
+                $tagIds = array();
+                $tagNames = array();
+                foreach ($tags as $tag){
+                    $tagIds[] = $tag->Id;
+                    $tagNames[] = $tag->Name;
+                }
+
+                $contactsArr[] = new Contact($row->Id,$row->FirstName,$row->LastName,$row->Email,$row->MobileNumber,$tagNames,$tagIds,$row->ColorCode, "");
+            }
+            return $contactsArr;
+        }
+    }
+
     public function getContactByName($userId,$contactName){
         $this->db->select('Contacts.*, GROUP_CONCAT(DISTINCT ContactTags.Id) as TagCodeList, GROUP_CONCAT(DISTINCT ContactTags.Name) as TagNameList');
         if (count($contactName) > 0) {
@@ -68,7 +98,9 @@ class ContactsManager extends CI_Model
                 $tagList = explode(",", $row->TagCodeList);
                 $tagnamelist = explode(",", $row->TagNameList);
 
-                $contactFound[] = new Contact($row->Id, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode,"1");
+                $contId  = $row->Id;
+                $contId += 0.5;
+                $contactFound[] = new Contact($contId, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode,"1");
             }
         }
 

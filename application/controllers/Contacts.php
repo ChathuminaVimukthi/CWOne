@@ -42,7 +42,8 @@ class Contacts extends REST_Controller
                         'mobileNumber' => $row->getMobileNumber(),
                         'tagIds' => $row->getTagIds(),
                         'tagNames' => $row->getTagNames(),
-                        'color' => $row->getColor()
+                        'color' => $row->getColor(),
+                        'flag' => $row->getFlag()
                     );
                     array_push($contacts,$data);
                 }
@@ -52,6 +53,24 @@ class Contacts extends REST_Controller
                 }else{
                     $noData = array('emptyMsg' => 'false');
                     $this->response( $noData, 200 );
+                }
+                break;
+            case 2:
+                $contId = $this->get('id');
+                $result = $this->ContactsManager->getContactsById($contId);
+                foreach ($result as $row){
+                    $data = array(
+                        'id' => $row->getId(),
+                        'firstName' => $row->getFirstName(),
+                        'lastName' => $row->getLastName(),
+                        'email' => $row->getEmail(),
+                        'mobileNumber' => $row->getMobileNumber(),
+                        'tagIds' => $row->getTagIds(),
+                        'tagNames' => $row->getTagNames(),
+                        'color' => $row->getColor(),
+                        'flag' => ""
+                    );
+                    $this->response( $data, 200 );
                 }
                 break;
             default:
