@@ -2,7 +2,7 @@
 
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
-class Contacts extends REST_Controller
+class ContactsController extends REST_Controller
 {
     public function __construct()
     {
@@ -35,7 +35,6 @@ class Contacts extends REST_Controller
                 $contacts = array();
                 foreach ($result as $row){
                     $data = array(
-                        'id' => $row->getId(),
                         'firstName' => $row->getFirstName(),
                         'lastName' => $row->getLastName(),
                         'email' => $row->getEmail(),
@@ -43,7 +42,8 @@ class Contacts extends REST_Controller
                         'tagIds' => $row->getTagIds(),
                         'tagNames' => $row->getTagNames(),
                         'color' => $row->getColor(),
-                        'flag' => $row->getFlag()
+                        'flag' => $row->getFlag(),
+                        'id' => $row->getId()
                     );
                     array_push($contacts,$data);
                 }
@@ -76,21 +76,23 @@ class Contacts extends REST_Controller
             default:
                 $result = $this->ContactsManager->getContacts($userId);
                 $contacts = array();
-                foreach ($result as $row){
-                    $data = array(
-                        'id' => $row->getId(),
-                        'firstName' => $row->getFirstName(),
-                        'lastName' => $row->getLastName(),
-                        'email' => $row->getEmail(),
-                        'mobileNumber' => $row->getMobileNumber(),
-                        'tagIds' => $row->getTagIds(),
-                        'tagNames' => $row->getTagNames(),
-                        'color' => $row->getColor()
+                if($result){
+                    foreach ($result as $row){
+                        $data = array(
+                            'id' => $row->getId(),
+                            'firstName' => $row->getFirstName(),
+                            'lastName' => $row->getLastName(),
+                            'email' => $row->getEmail(),
+                            'mobileNumber' => $row->getMobileNumber(),
+                            'tagIds' => $row->getTagIds(),
+                            'tagNames' => $row->getTagNames(),
+                            'color' => $row->getColor()
 
-                    );
-                    array_push($contacts,$data);
+                        );
+                        array_push($contacts,$data);
+                    }
+                    $this->response( $contacts, 200 );
                 }
-                $this->response( $contacts, 200 );
         }
     }
 

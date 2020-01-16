@@ -108,15 +108,25 @@ if (isset($this->session->userdata['logged_in'])) {
                         echo '</div>';
                         echo '<hr/>';
                         $postedContent = $value->getContent();
-                        $filterUrl = "~https?://(?![^\" ]*(?:jpg|png|gif))[^\" ]+~";
-                        $filterAll = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
-                        $imageUrlFilter = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+(\/\S*)?\.(?:jpg|jpeg|gif|png|JPG|JPEG|PNG|GIF)/";
-                        if (preg_match($filterUrl, $value->getContent(), $url)) {
-                            echo preg_replace($filterAll, "", $postedContent);
-                            echo "<a href='{$url[0]}' target='_blank' rel='noopener noreferrer'>{$url[0]}</a> ";
-                            if (preg_match($imageUrlFilter,$value->getContent(), $url)) {
-                                echo  "<img style='height: 300px;margin-left: auto;margin-right: auto;display: block' src='{$url[0]}'/>";
+                        $filterUrl = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+                        if (preg_match($filterUrl, $postedContent, $url)) {
+                            echo preg_replace($filterUrl, "<a href='$0' target='_blank' rel='noopener noreferrer'>$0</a><br> ", $postedContent);
+                            $count=preg_match_all($filterUrl, $value->getContent(), $url);
+                            for ($x=0; $x<$count; $x++){
+
+                                $imgTypesArr = array("gif", "jpg", "jpeg", "png", "tiff", "tif");
+                                $urlExt = pathinfo($url[0][$x], PATHINFO_EXTENSION);
+                                if (in_array($urlExt, $imgTypesArr)) {
+                                    echo  "<br><img style='height: 300px;margin-left: auto;margin-right: auto;display: block' src='{$url[0][$x]}'/>";
+                                    $img_from_url=true;
+                                    break;
+                                }
+                                else{
+                                    $img_from_url=false;
+                                }
+
                             }
+
                         } else {
                             echo $postedContent;
                         }

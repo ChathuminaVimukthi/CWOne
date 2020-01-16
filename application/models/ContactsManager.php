@@ -99,7 +99,6 @@ class ContactsManager extends CI_Model
                 $tagnamelist = explode(",", $row->TagNameList);
 
                 $contId  = $row->Id;
-                $contId += 0.5;
                 $contactFound[] = new Contact($contId, $row->FirstName, $row->LastName, $row->Email, $row->MobileNumber, $tagnamelist,$tagList, $row->ColorCode,"1");
             }
         }

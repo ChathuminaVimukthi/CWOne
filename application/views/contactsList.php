@@ -23,7 +23,7 @@ if (isset($this->session->userdata['logged_in'])) {
 <body>
 <?php include('util/header.php'); ?>
 <div class="row second-body">
-    <div class="col-md-2" style="width: 16%">
+    <div class="col-md-2" style="position: fixed; width: 16%">
         <?php include('util/profileCard.php'); ?>
         <br/>
         <div class="side-skirt" id="favoriteContacts" style="margin-left: 15px;overflow-y:auto;max-height: 200px">
@@ -31,14 +31,14 @@ if (isset($this->session->userdata['logged_in'])) {
         </div>
 
     </div>
-    <div class="col-md-10 contacts-background" style="padding: 0 !important;height: 100%">
+    <div class="col-md-10 contacts-background" style="margin-left: 16%;padding: 0 !important;height: 100%">
         <div>
             <nav class="contacts-header navbar-light">
                 <div class="container-fluid">
                     <div class="navbar-header col-md-4" style="padding: 0 !important;">
                         <a class="navbar-brand" style="color: #fff; background: #8B9DC3;border-radius: 30px"
                            id="contactListBtn"
-                           href="<?php echo base_url(); ?>index.php/Contacts/">Contacts List</a>
+                           href="<?php echo base_url(); ?>index.php/ContactsController/">Contacts List</a>
                     </div>
 
                     <ul class="nav navbar-nav navbar-right">
@@ -112,7 +112,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     Save Contact
                 </button>
             </div>
-            <hr/>
+            <hr style="margin-bottom: 5px"/>
         </div>
 
         <div class="modal fade" id="myModal" role="dialog">
@@ -194,6 +194,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
     $('#addContactBtn').click(function () {
         $("i", this).toggleClass("fa-chevron-up fa-chevron-down");
+        $('.error').html("");
     });
     let checkValidity = true;
 
@@ -328,7 +329,7 @@ if (isset($this->session->userdata['logged_in'])) {
 
     let Contacts = Backbone.Model.extend({
         url: function () {
-            return "<?php echo base_url() ?>index.php/Contacts/contact";
+            return "<?php echo base_url() ?>index.php/ContactsController/contact";
         },
         idAttribute: 'id',
         defaults:{
@@ -359,14 +360,12 @@ if (isset($this->session->userdata['logged_in'])) {
     let ContactCollection = Backbone.Collection.extend({
         model:Contacts,
         url: function () {
-            return "<?php echo base_url() ?>index.php/Contacts/contact";
+            return "<?php echo base_url() ?>index.php/ContactsController/contact";
         }
     });
 
     let contactCollection = new ContactCollection();
     let contact = new Contacts();
-    let contactsByName = new Contacts({caseId:3,lastName:"hey"});
-    contactsByName.fetchByName();
 
     contactCollection.comparator = function (model) {
         return model.get("firstName");
@@ -433,16 +432,19 @@ if (isset($this->session->userdata['logged_in'])) {
                 '<hr style="margin-top: 0px;margin-bottom: 5px"/>';
             let isName = false;
             let isTag = false;
+            let contCount = 0;
             contactCollection.each(function (c) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
                 if(name != null){
+                    document.getElementById("showAlert").style.display="none";
+                    contCount ++;
                     let contact =" <div class='col-md-12' style='margin-bottom: 5px'>" +
                         "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
-                        "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
-                        "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
-                        "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
-                        "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
+                        "<div style='' class='col-md-3 contactName' id='names'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
+                        "<div style='' class='col-md-2 otherNames'>"+c.get('email')+"</div>"+
+                        "<div style='' class='col-md-2 otherNames'>"+c.get('mobileNumber')+"</div>"+
+                        "<div style='' class='col-md-2 otherNames' id='tags'>"+c.get('tagNames')+"</div>"+
                         "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
                         "<button class='col-md-1 contactManageBtn' value='"+c.get('id')+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
                         "</div>"+
@@ -452,36 +454,37 @@ if (isset($this->session->userdata['logged_in'])) {
 
                     let flag = c.get('flag');
 
-                    switch (flag) {
-                        case "1":
-                            isName = true;
-                            let contId = c.get('id');
-                            if(!Number.isInteger(contId)){
-                                contId -= 0.5;
-                            }
-                            let conts =" <div class='col-md-12' style='margin-bottom: 5px'>" +
-                                "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
-                                "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
-                                "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
-                                "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
-                                "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
-                                "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
-                                "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
-                                "</div>"+
-                                "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
-
-                            ;
-                            contByName += conts;
-                            break;
-                        case "2":
-                            isTag = true;
-                            contByTag += contact;
-                            break;
-                        default:
-                            self.$el.append(contact);
-                            break;
-
-                    }
+                    // switch (flag) {
+                    //     case "1":
+                    //         isName = true;
+                    //         let contId = c.get('id');
+                    //         if(!Number.isInteger(contId)){
+                    //             contId -= 0.5;
+                    //         }
+                    //         let conts =" <div class='col-md-12' style='margin-bottom: 5px'>" +
+                    //             "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
+                    //             "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
+                    //             "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
+                    //             "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
+                    //             "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
+                    //             "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
+                    //             "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
+                    //             "</div>"+
+                    //             "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
+                    //
+                    //         ;
+                    //         contByName += conts;
+                    //         break;
+                    //     case "2":
+                    //         isTag = true;
+                    //         contByTag += contact;
+                    //         break;
+                    //     default:
+                    //         break;
+                    //
+                    //
+                    // }
+                    self.$el.append(contact);
 
                     let tNames = c.get('tagNames');
                     if(tNames.includes('Favorite')){
@@ -502,6 +505,14 @@ if (isset($this->session->userdata['logged_in'])) {
             }
             if(isTag === true){
                 $('#displayContacts').append(contByTag);
+            }
+            if(contCount === 0 && !isSearch){
+                document.getElementById("showAlert").style.display="block";
+                let alert = "<div style='margin: 10px' class='alert alert-info alert-dismissible' role='alert'>" +
+                    "<button type='button' id='closeAlert' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+                    "<strong>You have not entered any contacts yet!</strong></div>";
+                let div = document.getElementById("showAlert");
+                div.innerHTML += alert;
             }
             $('#favoriteContacts').append(favorties);
         }
@@ -606,19 +617,7 @@ if (isset($this->session->userdata['logged_in'])) {
                     tags: tags
                 });
                 contact.save();
-                if(isSearch){
-                    let dupContId = parseInt(contactId) + 0.5;
-                    let dupCont = contactCollection.get(dupContId);
-                    dupCont.set({
-                        id: dupContId,
-                        firstName: firstName.capitalize(),
-                        lastName: lastName.capitalize(),
-                        email: email,
-                        mobileNumber: parseInt(mobileNumber),
-                        tagIds: tags,
-                        tagNames: tagName
-                    });
-                }
+
                 let cont = contactCollection.get(contactId);
                 cont.set({
                     id: contactId,
@@ -648,6 +647,7 @@ if (isset($this->session->userdata['logged_in'])) {
             "click #searchContactsBtn": "searchContacts"
         },
         searchContacts: function () {
+            isSearch = true;
             contactCollection.reset();
             let searchString = $('#searchContacts').val();
             let strSplit = searchString.split(" ");
@@ -667,6 +667,20 @@ if (isset($this->session->userdata['logged_in'])) {
                 contactCollection.fetch({async:false});
             }else{
                 isSearch = true;
+                for (let i = 0; i < strSplit.length; i++){
+                    var src_str = $("#displayContacts").html();
+                    var term = strSplit[i];
+                    term = term.replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
+                    var pattern = new RegExp("("+term+")", "gi");
+
+                    // var color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+                    let color = "#d21f99";
+
+                    src_str = src_str.replace(pattern, "<mark style='"+"color:"+color+";background: none;padding: unset'>$1</mark>");
+                    //src_str = src_str.replace(/(<mark>[^<>]*)((<[^>]+>)+)([^<>]*<\/mark>)/,"$1</mark>$2<mark>$4");
+
+                    $("#displayContacts").html(src_str);
+                }
             }
         }
     });
