@@ -423,7 +423,8 @@ if (isset($this->session->userdata['logged_in'])) {
         render: function () {
             let self = this;
             $("#displayContacts").html("");
-            $('#favoriteContacts').html("");
+            let favContactView = new FavContactView();
+            //$('#favoriteContacts').html("");
             let favorties = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Favorite Contacts</p>\n' +
                 '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
             let contByTag = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Contacts By Tag</p>\n' +
@@ -437,7 +438,7 @@ if (isset($this->session->userdata['logged_in'])) {
                 let randomColor = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});
                 let name = c.get('firstName');
                 if(name != null){
-                    document.getElementById("showAlert").style.display="none";
+                    //document.getElementById("showAlert").style.display="none";
                     contCount ++;
                     let contact =" <div class='col-md-12' style='margin-bottom: 5px'>" +
                         "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
@@ -454,36 +455,6 @@ if (isset($this->session->userdata['logged_in'])) {
 
                     let flag = c.get('flag');
 
-                    // switch (flag) {
-                    //     case "1":
-                    //         isName = true;
-                    //         let contId = c.get('id');
-                    //         if(!Number.isInteger(contId)){
-                    //             contId -= 0.5;
-                    //         }
-                    //         let conts =" <div class='col-md-12' style='margin-bottom: 5px'>" +
-                    //             "<div style='"+"background:"+c.get('color')+"' class='col-md-1 contactAvatar'>"+name[0].toUpperCase()+"</div>" +
-                    //             "<div style='' class='col-md-3 contactName'>"+c.get('firstName')+" "+c.get('lastName')+"</div>"+
-                    //             "<div style='' class='col-md-2 textClass'>"+c.get('email')+"</div>"+
-                    //             "<div style='' class='col-md-2 textClass'>"+c.get('mobileNumber')+"</div>"+
-                    //             "<div style='' class='col-md-2 textClass'>"+c.get('tagNames')+"</div>"+
-                    //             "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='updateContactBtn' style='padding-top: 10px' data-toggle='modal' data-target='#myModal'><i class='col-md-12 fas fa-edit' aria-hidden='true'></i></button>"+
-                    //             "<button class='col-md-1 contactManageBtn' value='"+contId+"' id='deleteContactBtn'><i class='col-md-12 fa fa-trash contactManageBtn' aria-hidden='true'></i></button>"+
-                    //             "</div>"+
-                    //             "<hr style='margin-top: 10px !important;margin-bottom: 10px !important;'/>"
-                    //
-                    //         ;
-                    //         contByName += conts;
-                    //         break;
-                    //     case "2":
-                    //         isTag = true;
-                    //         contByTag += contact;
-                    //         break;
-                    //     default:
-                    //         break;
-                    //
-                    //
-                    // }
                     self.$el.append(contact);
 
                     let tNames = c.get('tagNames');
@@ -514,7 +485,7 @@ if (isset($this->session->userdata['logged_in'])) {
                 let div = document.getElementById("showAlert");
                 div.innerHTML += alert;
             }
-            $('#favoriteContacts').append(favorties);
+            //$('#favoriteContacts').append(favorties);
         }
     });
 
@@ -686,6 +657,58 @@ if (isset($this->session->userdata['logged_in'])) {
     });
 
     let searchContactsBtn = new SearchContactsBtn();
+
+    //fav contacts
+    let FavContactCollection = Backbone.Collection.extend({
+        model:Contacts,
+        url: function () {
+            return "<?php echo base_url() ?>index.php/ContactsController/contact";
+        }
+    });
+
+    let favContactCollection = new FavContactCollection();
+
+    let FavContactView = Backbone.View.extend({
+        el:"#favoriteContacts",
+        model:favContactCollection,
+        initialize: function () {
+            favContactCollection.fetch({async:false});
+            this.byNameAscd();
+            this.render();
+            this.listenTo(favContactCollection, 'add remove change sort', this.render);
+        },
+        byNameAscd: function () {
+            contactCollection.sort();
+        },
+        render: function () {
+            let self = this;
+            $('#favoriteContacts').html("");
+            let favorties = '<p style="text-align: center;padding-top: 5px;font-weight: bold">Favorite Contacts</p>\n' +
+                '<hr style="margin-top: 0px;margin-bottom: 0px"/>';
+
+            favContactCollection.each(function (c) {
+                let name = c.get('firstName');
+                if(name != null){
+                    //document.getElementById("showAlert").style.display="none";
+
+                    let tNames = c.get('tagNames');
+                    if(tNames.includes('Favorite')){
+                        let favoriteContacts =
+                            "<div style='padding: 5px'>"+
+                            "<div style='"+"background:"+c.get('color')+";margin-top: 10px' class='col-md-4 contactAvatar'>"+name[0].toUpperCase()+"</div>"+
+                            "<div class='col-md-8'>"+
+                            "<div style='' class='col-md-12 contactName'>"+c.get('firstName')+"</div>"+
+                            "<div style='' class='col-md-12 textClass'>"+c.get('mobileNumber')+"</div>"+
+                            "</div>"+
+                            "</div>";
+                        favorties += favoriteContacts;
+                    }
+                }
+            });
+            $('#favoriteContacts').append(favorties);
+        }
+    });
+
 
 </script>
 </body>
